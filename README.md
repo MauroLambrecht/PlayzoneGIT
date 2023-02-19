@@ -93,12 +93,14 @@ This project uses the following technologies:
 - Amazon AWS
 
 ### Front-End Libraries
-[![React Native][ReactNative-img]][ReactNative-url] [![Expo][Expo-img]][Expo-url]
+[![React Native][ReactNative-img]][ReactNative-url]
+[![Expo][Expo-img]][Expo-url]
 
 ### Back-End Libraries
-[![Express][Express-img]][Express-url] [![Axios][Axios-img]][Axios-url]
+[![Express][Express-img]][Express-url]
+[![Axios][Axios-img]][Axios-url]
 
-### Other Libraries
+### Other technologies
 [![Amazon AWS][AWS-img]][AWS-url]
 
 
