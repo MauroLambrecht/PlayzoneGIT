@@ -115,7 +115,7 @@ mobile
   
 go back
   ```sh
-  npm install node
+  cd ..
   ```
   
 server
