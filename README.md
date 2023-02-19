@@ -156,3 +156,14 @@ See the [open issues](https://github.com/MauroLambrecht/PlayzoneGIT/issues) for 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+[ReactNative-img]: https://img.shields.io/badge/-React%20Native-blue.svg
+[ReactNative-url]: https://reactnative.dev/
+[Expo-img]: https://img.shields.io/badge/-Expo-blue.svg
+[Expo-url]: https://expo.io/
+[Express-img]: https://img.shields.io/badge/-Express-brightgreen.svg
+[Express-url]: https://expressjs.com/
+[Axios-img]: https://img.shields.io/badge/-Axios-red.svg
+[Axios-url]: https://github.com/axios/axios
+[AWS-img]: https://img.shields.io/badge/-Amazon%20AWS-orange.svg
+[AWS-url]: https://aws.amazon.com/
