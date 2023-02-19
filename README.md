@@ -85,10 +85,12 @@ This project uses the following technologies:
 
 ### Front-End Libraries
 [![React Native][ReactNative-img]][ReactNative-url]
+
 [![Expo][Expo-img]][Expo-url]
 
 ### Back-End Libraries
 [![Express][Express-img]][Express-url]
+
 [![Axios][Axios-img]][Axios-url]
 
 ### Other technologies
