@@ -1,4 +1,4 @@
-# PlayzoneGIT
+# Playzone
 
 <a name="readme-top"></a>
 
@@ -6,7 +6,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/MauroLambrecht/PlayzoneGIT/">
-    <img src="mobile/app/assets/images/logo.png" alt="Logo" width="80" height="80">
+    <img src="mobile/app/assets/images/logo.png" alt="Logo" width="160" height="220">
   </a>
 
   <h3 align="center">PlayZone Basketball app</h3>
@@ -75,16 +75,27 @@ If you're still doubting, just try it and see for yourself
 
 ### Built With
 
-This section list frameworks/libraries used for our project. 
+This project uses the following technologies:
 
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+- [React Native](https://reactnative.dev/)
+- [Expo](https://expo.io/)
+- [Axios](https://axios-http.com/)
+- [Express API](https://expressjs.com/)
+- [Amazon AWS](https://aws.amazon.com/)
+
+## Front-End Libraries
+
+[![React Native][ReactNative.js]][ReactNative-url]
+[![Expo][Expo.js]][Expo-url]
+
+## Back-End Libraries
+
+[![Express][Express.js]][Express-url]
+[![Axios][Axios.js]][Axios-url]
+
+## Other Libraries
+
+[![Amazon AWS][AWS.js]][AWS-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -118,8 +129,10 @@ server
     npm install node
   ```
 
+
 <!-- ROADMAP -->
 ## Roadmap
+
 
 - [x] basic auth
 - [x] add server
