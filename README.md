@@ -83,19 +83,24 @@ This project uses the following technologies:
 - [Express API](https://expressjs.com/)
 - [Amazon AWS](https://aws.amazon.com/)
 
-## Front-End Libraries
+## Built With
+This project uses the following technologies:
 
-[![React Native][ReactNative.js]][ReactNative-url]
-[![Expo][Expo.js]][Expo-url]
+- React Native
+- Expo
+- Axios
+- Express API
+- Amazon AWS
 
-## Back-End Libraries
+### Front-End Libraries
+[![React Native][ReactNative-img]][ReactNative-url] [![Expo][Expo-img]][Expo-url]
 
-[![Express][Express.js]][Express-url]
-[![Axios][Axios.js]][Axios-url]
+### Back-End Libraries
+[![Express][Express-img]][Express-url] [![Axios][Axios-img]][Axios-url]
 
-## Other Libraries
+### Other Libraries
+[![Amazon AWS][AWS-img]][AWS-url]
 
-[![Amazon AWS][AWS.js]][AWS-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -157,13 +162,14 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-[ReactNative-img]: https://img.shields.io/badge/-React%20Native-blue.svg
+
+[ReactNative-img]: https://img.shields.io/badge/React_Native-0.64.2-blue.svg
 [ReactNative-url]: https://reactnative.dev/
-[Expo-img]: https://img.shields.io/badge/-Expo-blue.svg
+[Expo-img]: https://img.shields.io/badge/Expo-44.0.0-lightgrey.svg
 [Expo-url]: https://expo.io/
-[Express-img]: https://img.shields.io/badge/-Express-brightgreen.svg
+[Express-img]: https://img.shields.io/badge/Express-4.17.1-green.svg
 [Express-url]: https://expressjs.com/
-[Axios-img]: https://img.shields.io/badge/-Axios-red.svg
+[Axios-img]: https://img.shields.io/badge/Axios-0.23.0-yellow.svg
 [Axios-url]: https://github.com/axios/axios
-[AWS-img]: https://img.shields.io/badge/-Amazon%20AWS-orange.svg
-[AWS-url]: https://aws.amazon.com/
+[AWS-img]: https://img.shields.io/badge/Amazon_AWS-S3-red.svg
+[AWS-url]: https://aws.amazon.com/s3/
