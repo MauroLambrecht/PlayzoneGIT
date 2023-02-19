@@ -58,8 +58,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
 If you are stuck at home, wanting to play basketball? Don't hesitate and download now the app. Playzone creates matches for you so you don't have to find players to play with yourself!
 
 Here's why you should download:
