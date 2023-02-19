@@ -73,7 +73,7 @@ If you're still doubting, just try it and see for yourself
 
 
 
-### Built With
+## Built With
 
 This project uses the following technologies:
 
@@ -82,15 +82,6 @@ This project uses the following technologies:
 - [Axios](https://axios-http.com/)
 - [Express API](https://expressjs.com/)
 - [Amazon AWS](https://aws.amazon.com/)
-
-## Built With
-This project uses the following technologies:
-
-- React Native
-- Expo
-- Axios
-- Express API
-- Amazon AWS
 
 ### Front-End Libraries
 [![React Native][ReactNative-img]][ReactNative-url]
