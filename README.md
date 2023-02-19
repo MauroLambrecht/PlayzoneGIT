@@ -124,7 +124,7 @@ server
   ```
   
   ```sh
-    npm install node
+  npm install node
   ```
 
 
