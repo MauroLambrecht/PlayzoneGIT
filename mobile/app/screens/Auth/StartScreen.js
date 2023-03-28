@@ -12,8 +12,6 @@ import { useProjectFonts } from "../../config/fonts.js";
 import { useNavigation } from "@react-navigation/native";
 
 import { Entypo } from "@expo/vector-icons";
-import RoundButton from "../../components/RoundButton.js";
-import Colors from "../../config/colors.js";
 
 const Startscreen = () => {
   const navigation = useNavigation();
@@ -37,24 +35,20 @@ const Startscreen = () => {
         <Text style={styles.title}>Playzone</Text>
         <Text style={styles.subtitle}>Play Basketball today!</Text>
       </View>
-      <View style={styles.buttonsContainer}>
-        <View style={styles.buttonWrapper}>
-          <RoundButton
-            title="Login"
-            onPress={() => navigation.navigate("Login")}
-            buttonStyle={styles.color}
-            textStyle={styles.text}
-          />
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Welcome")}
+        style={styles.StartContainer}
+      >
+        <Entypo
+          name="chevron-thin-down"
+          size={30}
+          color="white"
+          style={styles.icon}
+        />
+        <View>
+          <Text style={styles.starttext}>Start</Text>
         </View>
-        <View style={styles.buttonWrapper}>
-          <RoundButton
-            title="Register"
-            onPress={() => navigation.navigate("Register")}
-            buttonStyle={styles.color2}
-            textStyle={styles.text}
-          />
-        </View>
-      </View>
+      </TouchableOpacity>
     </ImageBackground>
   );
 };
@@ -89,20 +83,27 @@ const styles = StyleSheet.create({
     color: "#eee",
   },
   buttonsContainer: {
-    flexDirection: "column",
+    flexDirection: "row",
+    justifyContent: "space-around",
     alignItems: "center",
     position: "absolute",
     bottom: 50,
+    left: 0,
+    right: 0,
   },
   buttonWrapper: {
-    width: 400,
-    alignItems: "center",
+    width: "40%",
   },
   color: {
-    backgroundColor: "#A71286",
+    backgroundColor: "rgba(255, 255, 255, 0.8)", // semi-transparent white
+  },
+  orangetext: {
+    color: "#f60",
   },
   color2: {
-    backgroundColor: "#FF8100",
+    backgroundColor: "transparent",
+    borderColor: "#f60",
+    borderWidth: 2,
   },
   StartContainer: {
     bottom: "7%",
@@ -116,9 +117,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 24,
     fontFamily: "QuicksandSemi",
-  },
-  text: {
-    fontFamily: "QuicksandBold",
   },
 });
 

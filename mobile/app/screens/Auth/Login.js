@@ -6,10 +6,9 @@ import { useProjectFonts } from "../../config/fonts.js";
 import RoundButton from "../../components/RoundButton.js";
 import Colors from "../../config/colors.js";
 import auth from "../../services/AuthApi.js";
-
 import { useNavigation } from "@react-navigation/native";
 
-const Login = () => {
+const Login = ({ handleLogin }) => {
   const [email, SetEmail] = useState("");
   const [password, SetPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -21,13 +20,13 @@ const Login = () => {
     return undefined;
   }
 
-  const handleLogin = async () => {
+  const handleMyLogin = async () => {
     try {
       const data = await auth.login(email, password);
       if (data.error) {
         setErrorMessage(data.error);
       } else {
-        navigation.navigate("Home");
+        handleLogin();
       }
     } catch (error) {
       console.error(error);
@@ -64,7 +63,7 @@ const Login = () => {
       <View style={styles.center}>
         <RoundButton
           title="Login"
-          onPress={handleLogin}
+          onPress={handleMyLogin}
           buttonStyle={styles.orangeButton}
         />
       </View>

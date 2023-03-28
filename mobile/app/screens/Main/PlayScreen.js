@@ -1,32 +1,54 @@
-import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
-
-import { useProjectFonts } from "../../config/fonts.js";
-import RoundButton from "../../components/RoundButton.js";
-import { GradientText } from "../../components/GradientComp";
-
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ScrollView,
+} from "react-native";
 import Colors from "../../config/colors.js";
-import { useNavigation } from "@react-navigation/native";
+import getMyGames from "../../services/GetMyGames.js";
+import RoundButton from "../../components/RoundButton.js";
+import GameCard from "../../components/GameCard.js";
+import { GradientText } from "../../components/GradientComp.js";
+import { useProjectFonts } from "../../config/fonts.js";
 
-const PlayScreen = () => {
+const PlayScreen = ({ handleLogout }) => {
+  const [games, setGames] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // useEffect(() => {
+  //   const fetchGames = async () => {
+  //     const games = await getMyGames();
+  //     setGames(games);
+  //     setIsLoading(false);
+  //   };
+  //   fetchGames();
+  // }, []);
+
   const fontsLoaded = useProjectFonts();
-  if (!fontsLoaded) {
-    return undefined;
+
+  if (isLoading || !fontsLoaded) {
+    return <ActivityIndicator />;
   }
 
   return (
     <View style={styles.container}>
       <View>
         <GradientText text="Public games" style={styles.title}></GradientText>
-        <Image />
       </View>
 
-      <View>{/* here doe the match components go */}</View>
+      {/* <ScrollView>
+        {games.map((game) => (
+          <GameCard key={game.IDGame} game={game} />
+        ))}
+      </ScrollView> */}
 
       <View style={styles.bottomContainer}>
         <RoundButton
           title="Create a game"
-          onPress={() => console.log("Hi")}
+          // onPress={handleLogout}
+          onPress={console.log("fuk this")}
           buttonStyle={styles.orangeButton}
         />
         <Text style={styles.text}>Invite Friends</Text>
@@ -38,14 +60,26 @@ const PlayScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#F7F7F7",
+    paddingTop: 20,
+  },
+  titleContainer: {
+    marginBottom: 20,
   },
   title: {
-    marginTop: 40,
-    marginLeft: 30,
-    fontFamily: "Quicksand",
-    fontWeight: "700",
+    fontFamily: "QuicksandBold",
+    fontWeight: "bold",
     fontSize: 24,
+    color: Colors.primary,
+    textTransform: "uppercase",
+    textAlign: "center",
     marginBottom: 20,
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollView: {
+    paddingBottom: 20,
   },
   bottomContainer: {
     paddingTop: 10,
@@ -57,15 +91,6 @@ const styles = StyleSheet.create({
   },
   orangeButton: {
     backgroundColor: Colors.orange,
-  },
-  text: {
-    marginTop: 10,
-    color: Colors.orange,
-    fontFamily: "Quicksand",
-    fontWeight: "bold",
-    fontSize: 18,
-    textDecorationLine: "underline",
-    marginBottom: 20,
   },
 });
 

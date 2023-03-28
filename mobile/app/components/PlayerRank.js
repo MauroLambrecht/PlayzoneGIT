@@ -1,43 +1,96 @@
 import React from "react";
 import { View, Image, Text, StyleSheet, FlatList } from "react-native";
+import { useProjectFonts } from "../config/fonts";
 
-const PlayerRank = () => {
+const PlayerRank = ({ player }) => {
+  const { rank, name, points } = player;
+
+  console.log(rank, name, points);
+
+  const fontsLoaded = useProjectFonts();
+  if (!fontsLoaded) {
+    return undefined;
+  }
+
   return (
     <View>
-      <FlatList
-        data={this.state.leaderboard}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <Text style={styles.positionText}>{item.position}</Text>
-            <Text style={styles.nameText}>{item.name}</Text>
-            <Text style={styles.pointsText}>{item.points}</Text>
-          </View>
-        )}
-      />
+      <View style={styles.container}>
+        <Text style={styles.number}>{rank}</Text>
+
+        <View style={styles.profilePicWrapper}>
+          <Image
+            source={require("../assets/images/1slnr0.jpg")}
+            style={styles.profilePic}
+          />
+        </View>
+
+        <View style={styles.infoWrapper}>
+          <Text style={styles.playerName}>{name}</Text>
+          <Text style={styles.points}>{points}</Text>
+        </View>
+        <View style={styles.line}></View>
+      </View>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
-  itemContainer: {
+  container: {
+    height: 52,
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    marginLeft: 25,
+    marginRight: 25,
   },
-  positionText: {
-    fontWeight: "bold",
-    fontSize: 16,
-    marginRight: 16,
+  rank: {
+    fontSize: 13,
+    color: "#ACACAC",
+    fontFamily: "QuicksandBold",
+    marginRight: 10,
   },
-  nameText: {
-    fontSize: 16,
+  number: {
+    fontSize: 13,
+    color: "#ACACAC",
+    fontFamily: "QuicksandBold",
+    marginRight: 20,
+    width: 20,
+    textAlign: "left",
+  },
+  profilePicWrapper: {
+    width: 30,
+    height: 30,
+    borderRadius: 25,
+    overflow: "hidden",
+    marginRight: 20,
+  },
+  profilePic: {
+    width: 30,
+    height: 30,
+  },
+  infoWrapper: {
     flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  pointsText: {
-    fontWeight: "bold",
-    fontSize: 16,
+  playerName: {
+    fontSize: 13,
+    color: "#ACACAC",
+    fontFamily: "QuicksandBold",
+    marginRight: 10,
+  },
+  points: {
+    fontSize: 13,
+    color: "#F88F24",
+    fontFamily: "QuicksandBold",
+  },
+  line: {
+    height: 1,
+    backgroundColor: "#CCCCCC",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });
 

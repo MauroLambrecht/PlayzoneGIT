@@ -7,7 +7,7 @@ import DatePicker from "../../components/DateSelector";
 import { useProjectFonts } from "../../config/fonts.js";
 import Colors from "../../config/colors.js";
 
-const StartGameModal = (props) => {
+const StartGameModal = () => {
   const [modalVisible, setModalVisible] = useState(true);
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const fontsLoaded = useProjectFonts();

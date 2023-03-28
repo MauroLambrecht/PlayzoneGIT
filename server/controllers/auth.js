@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.js");
+
+require("dotenv").config();
 const jwtSecret = process.env.JWT_SECRET;
 
 const signup = async (req, res, next) => {
@@ -36,7 +38,6 @@ const signup = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const dbUser = await User.findOneByEmail(req.body.email);
-    console.log(dbUser.IDUser);
     if (!dbUser) {
       return res.status(404).json({ message: "User not found" });
     }
