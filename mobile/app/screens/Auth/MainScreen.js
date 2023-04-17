@@ -12,7 +12,7 @@ import { useProjectFonts } from "../../config/fonts.js";
 import { useNavigation } from "@react-navigation/native";
 
 import { Entypo } from "@expo/vector-icons";
-import RoundButton from "../../components/RoundButton.js";
+import RoundButton from "../../components/misc/RoundButton.js";
 import Colors from "../../config/colors.js";
 
 const Startscreen = () => {
@@ -24,10 +24,7 @@ const Startscreen = () => {
   }
 
   return (
-    <ImageBackground
-      source={require("../../assets/images/mybg.png")}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <View style={styles.logo}>
         <Image
           source={require("../../assets/images/mylogo.png")}
@@ -55,11 +52,18 @@ const Startscreen = () => {
           />
         </View>
       </View>
-    </ImageBackground>
+    </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.orange,
+  },
+  background: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -102,8 +106,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#A71286",
   },
   color2: {
-    backgroundColor: "#FF8100",
+    backgroundColor: "transparent",
+    borderColor: "#fff",
+    borderWidth: 4,
   },
+
   StartContainer: {
     bottom: "7%",
     alignItems: "center",

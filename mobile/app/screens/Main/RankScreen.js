@@ -10,12 +10,12 @@ import {
   FlatList,
 } from "react-native";
 import { useProjectFonts } from "../../config/fonts.js";
-import RoundButton from "../../components/RoundButton.js";
+import RoundButton from "../../components/misc/RoundButton.js";
 import Colors from "../../config/colors.js";
 import { FontAwesome } from "@expo/vector-icons";
 
 import { useNavigation } from "@react-navigation/native";
-import PlayerRank from "../../components/PlayerRank.js";
+import PlayerRank from "../../components/sections/PlayerRank.js";
 
 const RankScreen = () => {
   const fontsLoaded = useProjectFonts();

@@ -6,7 +6,7 @@ import AuthNavigator from "./AuthNavigator";
 import HomeNavigator from "./HomeNavigator";
 
 const AppNavContainer = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const checkLoggedIn = async () => {
     const token = await AsyncStorage.getItem("userToken");

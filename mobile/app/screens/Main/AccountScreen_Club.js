@@ -1,7 +1,8 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, View, StyleSheet, Image } from "react-native";
 import Colors from "../../config/colors.js";
 import { useProjectFonts } from "../../config/fonts.js";
+import RoundButton from "../../components/misc/RoundButton.js";
 
 const AccountScreenClub = () => {
   const fontsLoaded = useProjectFonts();
@@ -11,68 +12,208 @@ const AccountScreenClub = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.Top}>
-        <Text style={styles.PlayerName}>Playername**</Text>
-        <View style={styles.Verander}>
-          <View>
-            <Text style={styles.AllTimeBest}>All time best: </Text>
-          </View>
-        </View>
-        <View style={styles.Select}>
+      <Image
+        source={require("../../assets/images/1slnr0.jpg")}
+        style={styles.ClubPic}
+      />
+      <Text style={styles.PlayerName}>Club name</Text>
+      <Text style={styles.AllTimeBest}>Created at: 26/01/2023 </Text>
+      <View style={styles.Select}>
+        <TouchableOpacity>
           <Text style={styles.Player}> Player</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
           <Text style={styles.Stats}>Stats</Text>
-          <Text style={styles.Club}>Club</Text>
-        </View>
-        <View style={styles.NumberOfPlayersView}>
-          <Text style={styles.NumberOfPlayersTekst}>Number Of players:</Text>
-          <Text style={styles.NumerOfPlayers}> ***</Text>
-        </View>
-        <View style={styles.ClubGamesView}>
-          <Text style={styles.ClubGamesTekst}>Club Games:</Text>
-          <Text style={styles.ClubGames}>#***</Text>
-        </View>
-        <View style={styles.ClubWinsView}>
-          <Text style={styles.ClubWinsTekst}>Club Wins:</Text>
-          <Text style={styles.ClubWins}>** </Text>
-        </View>
-        <View style={styles.DescriptionView}>
-          <Text style={styles.DescriptionTekst}>Description:</Text>
-          <Text style={styles.Description}>Not Set</Text>
+        </TouchableOpacity>
+        <Text style={styles.Club}>Club</Text>
+      </View>
+      <View style={styles.NumberOfPlayersView}>
+        <Text style={styles.NumberOfPlayersTekst}>Number Of players:</Text>
+        <Text style={styles.NumerOfPlayers}> 5</Text>
+      </View>
+      <View style={styles.ClubGamesView}>
+        <Text style={styles.ClubGamesTekst}>Club Games:</Text>
+        <Text style={styles.ClubGames}>10</Text>
+      </View>
+      <View style={styles.ClubWinsView}>
+        <Text style={styles.ClubWinsTekst}>Club Wins:</Text>
+        <Text style={styles.ClubWins}>8 </Text>
+      </View>
+      <View style={styles.DescriptionView}>
+        <Text style={styles.DescriptionTekst}>Description:</Text>
+        <Text style={styles.Description}> Not Set</Text>
+      </View>
+      <View style={styles.KnoppenOnderaan}>
+        <View style={styles.bottomContainerMessage}>
+          <RoundButton
+            title="Message"
+            onPress={console.log("message")}
+            buttonStyle={styles.orangeButton}
+          />
         </View>
 
-        <View style={styles.GamesAvarageView}>
-          <Text style={styles.GamesAvarageTekst}>Game Avarage:</Text>
-          <Text style={styles.GamsAvarage}>*** PT</Text>
+        <View style={styles.bottomContainerInvite}>
+          <RoundButton
+            title="invite"
+            onPress={console.log("invite")}
+            buttonStyle={styles.whiteButton}
+          />
         </View>
-        <View style={styles.TotalPointsView}>
-          <Text style={styles.TotalPointsTekst}>Total Points:</Text>
-          <Text style={styles.TotalPoints}>*** PT</Text>
-        </View>
-
-        <View style={styles.button}></View>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  AllTimeBest: {
+    fontSize: 10,
+    fontFamily: "QuicksandBold",
+    textAlign: "center",
+    color: Colors.black,
+    marginTop: 10,
+  },
+  PlayerName: {
+    fontSize: 18,
+    fontFamily: "QuicksandBold",
+    textAlign: "center",
+    color: Colors.black,
+    marginTop: 10,
+  },
+  Verander: {
+    flexDirection: "row",
+    fontSize: 10,
+    fontFamily: "QuicksandBold",
+    color: Colors.black,
+    marginTop: 10,
+    opacity: 0.5,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    padding: 8,
+    borderRadius: 5,
+  },
   Select: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginLeft: 0,
+    marginTop: 10,
+  },
+  Player: {
     backgroundColor: Colors.gray,
+    marginTop: 10,
+    opacity: 0.5,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    padding: 8,
+    borderRadius: 5,
+  },
+  Club: {
+    backgroundColor: Colors.orange,
+    color: "#000000",
+    marginTop: 10,
+    opacity: 0.5,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    padding: 8,
+    borderRadius: 5,
+  },
+  Stats: {
+    backgroundColor: Colors.gray,
+    marginTop: 10,
+    opacity: 0.5,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    padding: 8,
+    borderRadius: 5,
   },
   container: {
     flex: 1,
+    backgroundColor: Colors.white,
+  },
+
+  NumberOfPlayersView: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+    marginTop: 10,
+    opacity: 0.5,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    padding: 8,
+    borderRadius: 5,
+  },
+  ClubGamesView: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+    marginTop: 10,
+    opacity: 0.5,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    padding: 8,
+    borderRadius: 5,
+  },
+  ClubWinsView: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+    marginTop: 10,
+    opacity: 0.5,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    padding: 8,
+    borderRadius: 5,
+  },
+  DescriptionView: {
+    justifyContent: "space-between",
+    marginTop: 10,
+    opacity: 0.5,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    padding: 8,
+    borderRadius: 5,
+  },
+  Description: {
+    marginTop: 5,
     backgroundColor: Colors.gray,
+    paddingBottom: 50,
+    borderRadius: 5,
   },
-  description: {
-    backgroundColor: Colors.gray,
-    MarginBottom: 12,
+  NumberOfPlayersTekst: {
+    color: "#000",
   },
-  TotalGames: {},
-  WinsInfo: {
-    PaddingLeft: 0,
+  ClubPic: {
+    marginTop: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 20,
+    marginLeft: 140,
   },
-  TotalWins: {
-    PaddingRight: 0,
+  KnoppenOnderaan: {
+    flexDirection: "row",
+    marginBottom: 10,
+    marginLeft: 25,
+  },
+  orangeButton: {
+    backgroundColor: Colors.orange,
+    marginRight: 100,
+  },
+  whiteButton: {
+    backgroundColor: Colors.black,
+    marginRight: 100,
+    borderColor: Colors.orange,
   },
 });
 
