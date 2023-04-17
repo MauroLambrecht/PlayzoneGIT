@@ -1,3 +1,4 @@
+// user.model.js
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../utils/database");
 
@@ -8,6 +9,14 @@ const User = sequelize.define("tblusers", {
     autoIncrement: true,
     allowNull: false,
   },
+  firstname: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  lastname: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   username: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -16,6 +25,15 @@ const User = sequelize.define("tblusers", {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
+  },
+  tag: {
+    type: DataTypes.INTEGER(8),
+    allowNull: true,
+    unique: true,
+  },
+  dob: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -47,10 +65,26 @@ const User = sequelize.define("tblusers", {
   },
 });
 
+User.beforeCreate(async (user) => {
+  let uniqueNumber = "";
+  let numberExists = true;
+  while (numberExists) {
+    uniqueNumber = Math.floor(10000000 + Math.random() * 90000000).toString();
+    const userWithNumber = await User.findOne({
+      where: { tag: uniqueNumber },
+      attributes: ["IDUser"],
+    });
+    if (!userWithNumber) {
+      numberExists = false;
+    }
+  }
+  user.tag = uniqueNumber;
+});
+
 User.findOneByEmail = async (email) => {
   return await User.findOne({
     where: { email },
-    attributes: ["IDUser", "username", "email", "password"],
+    attributes: ["IDUser", "username", "email", "password", "tag"],
   });
 };
 

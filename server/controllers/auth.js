@@ -22,9 +22,12 @@ const signup = async (req, res, next) => {
     }
     const passwordHash = await bcrypt.hash(req.body.password, 12);
     await User.create({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       email: req.body.email,
       username: req.body.username,
       password: passwordHash,
+      dob: req.body.dob,
     });
     return res.status(200).json({ message: "User created" });
   } catch (err) {
@@ -36,6 +39,7 @@ const signup = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
+  console.log("login was called");
   try {
     const dbUser = await User.findOneByEmail(req.body.email);
     if (!dbUser) {
