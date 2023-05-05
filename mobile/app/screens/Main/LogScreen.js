@@ -12,7 +12,6 @@ import {
 import { useProjectFonts } from "../../config/fonts.js";
 import Colors from "../../config/colors.js";
 import { FontAwesome } from "@expo/vector-icons";
-import LogCard from "../../components/sections/Log.js";
 
 const LogScreen = () => {
   const fontsLoaded = useProjectFonts();
@@ -36,14 +35,6 @@ const LogScreen = () => {
         />
         <Text style={styles.Results}>Results</Text>
       </View>
-
-      <ScrollView>
-        <LogCard style={styles.Card}></LogCard>
-        <LogCard style={styles.Card}></LogCard>
-        <LogCard style={styles.Card}></LogCard>
-        <LogCard style={styles.Card}></LogCard>
-        <LogCard style={styles.Card}></LogCard>
-      </ScrollView>
     </View>
   );
 };
@@ -60,11 +51,9 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 5,
     marginBottom: 25,
-    width: "90%",
-    alignSelf: "center",
   },
   settings: {
-    paddingRight: 135,
+    paddingRight: 155,
   },
   Title: {
     fontSize: 28,

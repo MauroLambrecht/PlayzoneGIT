@@ -3,9 +3,9 @@ import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { TextInput } from "react-native-paper";
 
 import { useProjectFonts } from "../../config/fonts.js";
-import RoundButton from "../../components/misc/RoundButton.js";
+import RoundButton from "../../components/RoundButton.js";
 import Colors from "../../config/colors.js";
-import auth from "../../services/Authentication.js";
+import auth from "../../services/AuthApi.js";
 import { useNavigation } from "@react-navigation/native";
 
 const Login = ({ handleLogin }) => {
@@ -86,7 +86,7 @@ const Login = ({ handleLogin }) => {
         <Text style={styles.Register}>Don't have an account yet? </Text>
         <TouchableOpacity
           style={styles.here}
-          onPress={() => navigation.navigate("SignUpScreen1")}
+          onPress={() => navigation.navigate("Register")}
         >
           <Text style={styles.orange}>Register here</Text>
         </TouchableOpacity>
@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 50,
     marginBottom: 30,
-    marginTop: "20%",
   },
   title: {
     fontSize: 28,

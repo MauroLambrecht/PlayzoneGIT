@@ -8,12 +8,9 @@ import {
 } from "react-native";
 import Colors from "../../config/colors.js";
 import getMyGames from "../../services/GetMyGames.js";
-import RoundButton from "../../components/misc/RoundButton.js";
-import GameCard from "../../components/sections/GameCard.js";
-import {
-  GradientText,
-  GradientButton,
-} from "../../components/misc/GradientComp.js";
+import RoundButton from "../../components/RoundButton.js";
+import GameCard from "../../components/GameCard.js";
+import { GradientText } from "../../components/GradientComp.js";
 import { useProjectFonts } from "../../config/fonts.js";
 
 const PlayScreen = ({ handleLogout }) => {
@@ -41,22 +38,13 @@ const PlayScreen = ({ handleLogout }) => {
         <GradientText text="Public games" style={styles.title}></GradientText>
       </View>
 
-      <ScrollView>
-        {/* {games.map((game) => (
+      {/* <ScrollView>
+        {games.map((game) => (
           <GameCard key={game.IDGame} game={game} />
-        ))} */}
+        ))}
+      </ScrollView> */}
 
-        <GameCard style={styles.Card} />
-        <GameCard style={styles.Card} />
-        <GameCard style={styles.Card} />
-        <GameCard style={styles.Card} />
-        <GameCard style={styles.Card} />
-        <GameCard style={styles.Card} />
-        <GameCard style={styles.Card} />
-        <GameCard style={styles.Card} />
-      </ScrollView>
-
-      {/* <View style={styles.bottomContainer}>
+      <View style={styles.bottomContainer}>
         <RoundButton
           title="Create a game"
           // onPress={handleLogout}
@@ -64,7 +52,7 @@ const PlayScreen = ({ handleLogout }) => {
           buttonStyle={styles.orangeButton}
         />
         <Text style={styles.text}>Invite Friends</Text>
-      </View> */}
+      </View>
     </View>
   );
 };
@@ -74,9 +62,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F7F7F7",
     paddingTop: 20,
-  },
-  Card: {
-    marginBottom: 50,
   },
   titleContainer: {
     marginBottom: 20,

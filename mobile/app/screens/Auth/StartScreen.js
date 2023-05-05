@@ -1,169 +1,122 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   View,
   Image,
   Text,
   StyleSheet,
-  TouchableOpacity,
-  Animated,
+  Button,
   ImageBackground,
+  TouchableOpacity,
 } from "react-native";
 import { useProjectFonts } from "../../config/fonts.js";
 import { useNavigation } from "@react-navigation/native";
+
 import { Entypo } from "@expo/vector-icons";
-import Colors from "../../config/colors.js";
-import RoundButton from "../../components/misc/RoundButton.js";
 
 const Startscreen = () => {
   const navigation = useNavigation();
-  const [animation] = useState(new Animated.Value(0));
-  const [showButtons, setShowButtons] = useState(false);
 
   const fontsLoaded = useProjectFonts();
   if (!fontsLoaded) {
     return undefined;
   }
 
-  const startAnimation = () => {
-    setShowButtons(true);
-    Animated.timing(animation, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const opacity = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0],
-  });
-
   return (
     <ImageBackground
+      source={require("../../assets/images/mybg.png")}
       style={styles.container}
-      source={require("../../assets/images/8k.png")}
     >
-      <View style={[styles.background, styles.logo]}>
+      <View style={styles.logo}>
         <Image
-          source={require("../../assets/images/5.png")}
+          source={require("../../assets/images/mylogo.png")}
           resizeMode="contain"
           style={styles.image}
-        />
-        <Text style={styles.title}>
-          Play
-          <Text style={{ color: "#dc4d01" }}>zone</Text>
-        </Text>
+        ></Image>
+        <Text style={styles.title}>Playzone</Text>
         <Text style={styles.subtitle}>Play Basketball today!</Text>
       </View>
-      <View style={styles.startContainer}>
-        <TouchableOpacity onPress={startAnimation}>
-          <Animated.View style={[styles.icon, { opacity: opacity }]}>
-            <Entypo name="chevron-thin-down" size={30} color="white" />
-          </Animated.View>
-          <Animated.View style={[styles.starttext, { opacity: opacity }]}>
-            <Text style={styles.starttext}>Start</Text>
-          </Animated.View>
-        </TouchableOpacity>
-      </View>
-      {showButtons && (
-        <View style={styles.buttonsContainer}>
-          <View style={styles.buttonWrapper}>
-            <RoundButton
-              title="Login"
-              onPress={() => navigation.navigate("Login")}
-              buttonStyle={styles.color}
-              textStyle={styles.text}
-            />
-          </View>
-          <View style={styles.buttonWrapper}>
-            <RoundButton
-              title="Register"
-              onPress={() => navigation.navigate("SignUpScreen1")}
-              buttonStyle={styles.color2}
-              textStyle={styles.text}
-            />
-          </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Welcome")}
+        style={styles.StartContainer}
+      >
+        <Entypo
+          name="chevron-thin-down"
+          size={30}
+          color="white"
+          style={styles.icon}
+        />
+        <View>
+          <Text style={styles.starttext}>Start</Text>
         </View>
-      )}
+      </TouchableOpacity>
     </ImageBackground>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  background: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    marginHorizontal: -80,
   },
   logo: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 1,
+    bottom: "5%",
   },
   image: {
-    height: 150,
-    width: "100%",
-    marginLeft: "10%",
+    width: 120,
+    height: 120,
+    marginLeft: 40,
   },
   title: {
     fontSize: 48,
-    color: Colors.orange,
     fontFamily: "QuicksandBold",
+    textAlign: "center",
+    color: "#fff",
   },
   subtitle: {
-    fontSize: 18,
-    color: "#ccc",
+    fontSize: 19,
     fontFamily: "QuicksandSemi",
+    textAlign: "center",
+    color: "#eee",
   },
   buttonsContainer: {
-    flexDirection: "column",
+    flexDirection: "row",
+    justifyContent: "space-around",
     alignItems: "center",
     position: "absolute",
     bottom: 50,
     left: 0,
     right: 0,
-    alignItems: "center",
-    zIndex: 1,
   },
   buttonWrapper: {
-    width: 400,
-    alignItems: "center",
+    width: "40%",
   },
   color: {
-    backgroundColor: "#A71286",
+    backgroundColor: "rgba(255, 255, 255, 0.8)", // semi-transparent white
+  },
+  orangetext: {
+    color: "#f60",
   },
   color2: {
     backgroundColor: "transparent",
-    borderColor: "#fff",
-    borderWidth: 4,
+    borderColor: "#f60",
+    borderWidth: 2,
   },
-  startContainer: {
-    position: "absolute",
-    bottom: 50,
-    left: 0,
-    right: 0,
+  StartContainer: {
+    bottom: "7%",
     alignItems: "center",
-    zIndex: 1,
   },
   icon: {
     bottom: 20,
-    alignItems: "center",
   },
   starttext: {
     textDecorationLine: "underline",
     color: "#fff",
     fontSize: 24,
     fontFamily: "QuicksandSemi",
-  },
-  text: {
-    fontFamily: "QuicksandBold",
   },
 });
 

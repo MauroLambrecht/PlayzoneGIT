@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import Colors from "../../config/colors";
-import { GradientText } from "../../components/misc/GradientComp.js";
+import { GradientText } from "../../components/GradientComp";
 
 const DAYS_IN_WEEK = 7;
 const DAYS_IN_MONTH = 31;

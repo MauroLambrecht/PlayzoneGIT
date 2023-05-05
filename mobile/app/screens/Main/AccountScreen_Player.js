@@ -2,7 +2,7 @@ import React from "react";
 import { TouchableOpacity, Text, View, StyleSheet, Image } from "react-native";
 import Colors from "../../config/colors.js";
 import { useProjectFonts } from "../../config/fonts.js";
-import RoundButton from "../../components/misc/RoundButton.js";
+import RoundButton from "../../components/RoundButton.js";
 
 const AccountScreenPlayer = () => {
   const fontsLoaded = useProjectFonts();

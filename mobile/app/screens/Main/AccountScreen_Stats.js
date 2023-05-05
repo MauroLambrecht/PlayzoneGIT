@@ -2,6 +2,8 @@ import { TouchableOpacity, Text, View, StyleSheet, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import Colors from "../../config/colors.js";
 import { useProjectFonts } from "../../config/fonts.js";
+import RoundButton from "../../components/RoundButton.js";
+import { GradientButton, GradientText } from "../../components/GradientComp";
 
 const AccountScreenStats = () => {
   const fontsLoaded = useProjectFonts();

@@ -22,14 +22,14 @@ import LogScreen from "../screens/Main/LogScreen.js";
 import PlayScreen from "../screens/Main/PlayScreen.js";
 import RankScreen from "../screens/Main/RankScreen.js";
 import ProfileDrawer from "./DrawerNavigator.js";
-import Overlay from "../components/utils/overlay.js";
-import TextMenu from "../components/modals/ChatModal.js";
+import Overlay from "../components/overlay.js";
+import TextMenu from "../components/ChatModal.js";
 import AccountScreenStats from "../screens/Main/AccountScreen_Stats.js";
 import AccountScreenClub from "../screens/Main/AccountScreen_Club.js";
 import AccountScreenPlayer from "../screens/Main/AccountScreen_Player.js";
 
 import { useProjectFonts } from "../config/fonts.js";
-import { GradientText } from "../components/misc/GradientComp.js";
+import { GradientText } from "../components/GradientComp.js";
 import Colors from "../config/colors.js";
 import SettingsPage from "../screens/Settings/Settings.js";
 
