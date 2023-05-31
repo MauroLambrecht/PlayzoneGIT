@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Image,
@@ -10,45 +10,49 @@ import {
   FlatList,
 } from "react-native";
 import { useProjectFonts } from "../../config/fonts.js";
-import RoundButton from "../../components/RoundButton.js";
+import RoundButton from "../../components/misc/RoundButton.js";
 import Colors from "../../config/colors.js";
 import { FontAwesome } from "@expo/vector-icons";
 
 import { useNavigation } from "@react-navigation/native";
-import PlayerRank from "../../components/PlayerRank.js";
+import PlayerRank from "../../components/sections/PlayerRank.js";
+import instance from "../../services/index.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RankScreen = () => {
+  const [playerData, setPlayerData] = useState([]);
+
+  useEffect(() => {
+    let transformedData = [];
+
+    //fix c++ error on IOS
+    const fetchPlayerData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        const response = await instance.get("/leaderboard", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const myPlayerData = response.data;
+
+        transformedData = myPlayerData.leaderboard.map((player, index) => ({
+          rank: index + 1,
+          name: player.username,
+          points: player.points,
+        }));
+
+        setPlayerData(transformedData);
+      } catch (error) {
+        transformedData = [];
+      }
+    };
+
+    fetchPlayerData();
+  }, []);
+
   const fontsLoaded = useProjectFonts();
   if (!fontsLoaded) {
     return undefined;
   }
-
-  const playerData = [
-    { rank: 1, name: "Marc", points: 2000 },
-    { rank: 2, name: "John Doe", points: 1000 },
-    { rank: 3, name: "Jan Jansens", points: 900 },
-    { rank: 4, name: "Mike Tiran", points: 800 },
-    { rank: 5, name: "Fluppe van Frankrijk", points: 200 },
-    { rank: 6, name: "Mohammed Abdel", points: 100 },
-    { rank: 7, name: "Justin Timber", points: 50 },
-    { rank: 8, name: "Daddy D", points: 25 },
-    { rank: 9, name: "Eric Cartman", points: 20 },
-    { rank: 10, name: "Just Pablo", points: 10 },
-    { rank: 11, name: "Sarah Smith", points: 5 },
-    { rank: 12, name: "Emily Johnson", points: 5 },
-    { rank: 13, name: "Samantha Davis", points: 5 },
-    { rank: 14, name: "Jessica Wilson", points: 5 },
-    { rank: 15, name: "Ashley Martinez", points: 5 },
-    { rank: 16, name: "Stephanie Rodriguez", points: 5 },
-    { rank: 17, name: "Jennifer Hernandez", points: 5 },
-    { rank: 18, name: "Elizabeth Brown", points: 5 },
-    { rank: 19, name: "Alyssa Taylor", points: 5 },
-    { rank: 20, name: "Lauren Miller", points: 5 },
-  ];
-
-  const renderItem = (item) => {
-    return <PlayerRank player={item.item}></PlayerRank>;
-  };
 
   return (
     <View style={styles.container}>
@@ -68,9 +72,9 @@ const RankScreen = () => {
       </View>
       <FlatList
         data={playerData}
-        renderItem={renderItem}
+        renderItem={({ item }) => <PlayerRank player={item} />}
         keyExtractor={(item) => item.rank.toString()}
-      ></FlatList>
+      />
     </View>
   );
 };
@@ -108,7 +112,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: Colors.black,
   },
-  Points: {},
   container: {
     flex: 1,
     backgroundColor: Colors.white,

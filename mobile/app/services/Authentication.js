@@ -27,6 +27,8 @@ const login = (mail, pass) => {
     .then((res) => {
       if (res.data.token) {
         AsyncStorage.setItem("userToken", res.data.token);
+        AsyncStorage.setItem("ChatToken", res.data.chatToken);
+        AsyncStorage.setItem("user", JSON.stringify(res.data.user)); // store the user object as string
         instance.defaults.headers.common.Authorization = `Bearer ${res.data.token}`;
       }
       return res.data;

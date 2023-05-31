@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 
 import { useState, useEffect } from "react";
 
-const PasswordChecker = ({ password }) => {
+const PasswordChecker = ({ password, confirm }) => {
   //useState to test the PassswordStrenght
   const [passwordStrength, setPasswordStrength] = useState("weak");
 
@@ -28,7 +28,7 @@ const PasswordChecker = ({ password }) => {
     } else if (
       password.length >= 10 &&
       password.match(
-        /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.*[a-zA-Z]).{12,}$/
+        /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*-])(?=.*[a-zA-Z]).{12,}$/
       )
     ) {
       setPasswordStrength("strong");
@@ -48,8 +48,16 @@ const PasswordChecker = ({ password }) => {
   };
 
   useEffect(() => {
-    checkPasswordStrength(password);
-  }, [password]);
+    if (password) {
+      checkPasswordStrength(password);
+    }
+    // if (confirm != "" && password != confirm) {
+    //   setPasswordStrength("no match");
+    //   setColor1("red");
+    //   setColor2("red");
+    //   setColor3("red");
+    // }
+  }, [password, confirm]);
 
   return (
     <View>
@@ -82,11 +90,9 @@ const PasswordChecker = ({ password }) => {
       <Text style={styles.passwordStrengthText}>
         {passwordStrength === "none"
           ? "Please fill in your password"
-          : passwordStrength === "weak"
-          ? "Your password is too weak"
-          : passwordStrength === "medium"
-          ? "Your password is medium"
-          : "Your password is strong"}
+          : passwordStrength === "no match"
+          ? "passwords don't match"
+          : `Your password is ${passwordStrength}`}
       </Text>
     </View>
   );

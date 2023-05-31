@@ -5,8 +5,6 @@ import { useProjectFonts } from "../../config/fonts";
 const PlayerRank = ({ player }) => {
   const { rank, name, points } = player;
 
-  console.log(rank, name, points);
-
   const fontsLoaded = useProjectFonts();
   if (!fontsLoaded) {
     return undefined;

@@ -1,13 +1,25 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Colors from "../../config/colors.js";
 import RoundButton from "../../components/misc/RoundButton.js";
 import { useNavigation } from "@react-navigation/native";
+import { TextInput } from "react-native-paper";
+import {
+  AntDesign,
+  Entypo,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+import PasswordChecker from "../../components/utils/PasswordChecker.js";
+import auth from "../../services/Authentication.js";
 
-const SignupScreen2 = ({ route }) => {
-  const { firstName, LastName, email, dob } = route.params;
+const SignupScreen2 = ({ route, handleLogin }) => {
+  const { firstName, lastName, email, dob } = route.params;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confPassword, setConfPassword] = useState("");
+  const [pwVisable, setPwVisable] = useState(false);
+  const [cpwVisable, setCpwVisable] = useState(false);
 
   const navigation = useNavigation();
 
@@ -18,7 +30,7 @@ const SignupScreen2 = ({ route }) => {
         email,
         password,
         firstName,
-        LastName,
+        lastName,
         dob
       );
       console.log(response);
@@ -54,9 +66,32 @@ const SignupScreen2 = ({ route }) => {
         underlineColor="orange"
         style={styles.input}
         placeholder="Your Password"
-        secureTextEntry={true}
+        secureTextEntry={pwVisable ? false : true}
         onChangeText={(text) => setPassword(text)}
       ></TextInput>
+      <Ionicons
+        name={pwVisable ? "eye-outline" : "eye-off-outline"}
+        size={24}
+        style={styles.eye}
+        color="gray"
+        onPress={() => setPwVisable((prev) => !prev)}
+      />
+      <TextInput
+        underlineColor="orange"
+        style={styles.input}
+        placeholder="Confirm Password"
+        secureTextEntry={cpwVisable ? false : true}
+        onChangeText={(text) => setConfPassword(text)}
+        value={confPassword}
+      ></TextInput>
+      <Ionicons
+        name={cpwVisable ? "eye-outline" : "eye-off-outline"}
+        size={24}
+        style={styles.eye}
+        color="gray"
+        onPress={() => setCpwVisable((prev) => !prev)}
+      />
+      <PasswordChecker password={password} confirm={confPassword} />
       <View style={styles.buttonsContainer}>
         <RoundButton
           title="Create Account"
@@ -64,6 +99,7 @@ const SignupScreen2 = ({ route }) => {
           buttonStyle={styles.orangeButton}
         />
       </View>
+
       <View style={styles.center}>
         <Text styles={styles.text}>Already have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
@@ -85,7 +121,7 @@ const styles = StyleSheet.create({
     fontFamily: "Quicksand",
     textAlign: "center",
     color: "#767676",
-    marginTop: "10%",
+    marginTop: "50%",
     marginBottom: "10%",
   },
   input: {
@@ -114,6 +150,12 @@ const styles = StyleSheet.create({
     color: Colors.orange,
     borderBottomWidth: 1,
     borderColor: Colors.orange,
+  },
+  eye: {
+    position: "relative",
+    marginTop: -24,
+    top: -34,
+    left: "80%",
   },
 });
 

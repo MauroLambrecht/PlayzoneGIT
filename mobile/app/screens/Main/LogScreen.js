@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Image,
@@ -12,12 +12,31 @@ import {
 import { useProjectFonts } from "../../config/fonts.js";
 import Colors from "../../config/colors.js";
 import { FontAwesome } from "@expo/vector-icons";
+import LogCard from "../../components/sections/Log.js";
+import instance from "../../services/index.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LogScreen = () => {
-  const fontsLoaded = useProjectFonts();
-  if (!fontsLoaded) {
-    return undefined;
-  }
+  const [playerData, setPlayerData] = useState([]);
+
+  //useeffect voor api request
+  useEffect(() => {
+    const fetchPlayerData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        const response = await instance.get("/getfinishedGame", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const myPlayerData = response.data;
+        console.log(response.data);
+
+        setPlayerData(myPlayerData);
+      } catch (error) {
+        setPlayerData([]);
+      }
+    };
+    fetchPlayerData();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -35,9 +54,16 @@ const LogScreen = () => {
         />
         <Text style={styles.Results}>Results</Text>
       </View>
+      <ScrollView>
+        {Array.isArray(playerData.game) &&
+          playerData.game.map((game) => (
+            <LogCard key={game.IDGame} game={game} />
+          ))}
+      </ScrollView>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   filters: {
     flexDirection: "row",
@@ -51,20 +77,20 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 5,
     marginBottom: 25,
+    width: "90%",
+    alignSelf: "center",
   },
   settings: {
-    paddingRight: 155,
+    paddingRight: 135,
   },
   Title: {
     fontSize: 28,
-    fontFamily: "QuicksandBold",
     textAlign: "center",
     color: Colors.black,
     marginTop: 10,
   },
   undertitle: {
     fontSize: 15,
-    fontFamily: "QuicksandSemi",
     textAlign: "center",
     paddingLeft: 30,
     paddingRight: 30,
@@ -72,7 +98,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: Colors.black,
   },
-  Results: {},
   container: {
     flex: 1,
     backgroundColor: Colors.white,

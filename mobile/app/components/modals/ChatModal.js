@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   TouchableOpacity,
@@ -9,7 +9,12 @@ import {
   Modal,
   TextInput,
 } from "react-native";
-import { Ionicons, AntDesign, MaterialIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  AntDesign,
+  MaterialIcons,
+  FontAwesome,
+} from "@expo/vector-icons";
 import Colors from "../../config/colors";
 import MessageModal from "./MessageModal";
 import UserItem from "../misc/UserItem";
@@ -20,19 +25,47 @@ import instance from "../../services";
 
 const TextMenu = ({ handleClose }) => {
   const [users, setUsers] = useState([]);
-
+  const [chats, setChats] = useState([]);
   const [showMessages, setShowMessages] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [typingTimeout, setTypingTimeout] = useState(null);
+
+  useEffect(() => {
+    getChat();
+  }, []);
+
+  const getChat = () => {
+    // Load the list of users from AsyncStorage
+    AsyncStorage.getItem("usersData")
+      .then((data) => {
+        if (data) {
+          const parsedData = JSON.parse(data);
+          const chatList = parsedData.map((user) => ({
+            id: user.id,
+            username: user.username,
+            lastMessage: user.lastMessage,
+          }));
+          setChats(chatList);
+        }
+      })
+      .catch((error) => console.error(error));
+  };
 
   const handleUserPress = (user) => {
     setSelectedUser(user);
     setShowMessages(true);
+    const updatedUsers = [user, ...users.filter((u) => u.id !== user.id)];
+    setUsers(updatedUsers);
   };
 
   const handleCloseMessages = () => {
     setSelectedUser(null);
     setShowMessages(false);
+    if (!showMessages) {
+      getChat();
+      setUsers([]);
+    }
   };
 
   const handleFriendUser = (user) => {
@@ -41,24 +74,54 @@ const TextMenu = ({ handleClose }) => {
     AsyncStorage.setItem("friends", JSON.stringify(updatedUsers));
   };
 
-  const handleChatUser = (user) => {
-    const updatedUsers = [...users, user];
-    setUsers(updatedUsers);
-    AsyncStorage.setItem("friends", JSON.stringify(updatedUsers));
-  };
-
   const getUsers = async (searchQuery) => {
     try {
       const token = await AsyncStorage.getItem("userToken");
-      let response = await instance.get(`/users/${searchQuery}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const users = response.data.users;
-      setUsers(users);
+      let response;
+      if (searchQuery != "") {
+        response = await instance.get(`/users/${searchQuery}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const users = response.data.users;
+        setUsers(users);
+      } else {
+        getChat();
+        setUsers([]);
+      }
     } catch (error) {
       console.error(error);
       setUsers([]);
     }
+  };
+
+  const handleSearch = (text) => {
+    setSearchQuery(text);
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+    setTypingTimeout(
+      setTimeout(() => {
+        getUsers(text);
+      }, 500)
+    );
+  };
+
+  const handleDeleteUser = (user) => {
+    AsyncStorage.getItem("usersData")
+      .then((data) => {
+        if (data) {
+          const updatedUsersData = JSON.parse(data).filter(
+            (userData) => userData.id !== user.id
+          );
+          AsyncStorage.setItem("usersData", JSON.stringify(updatedUsersData))
+            .then(() => {
+              console.log("User deleted successfully");
+              setChats(updatedUsersData);
+            })
+            .catch((error) => console.error(error));
+        }
+      })
+      .catch((error) => console.error(error));
   };
 
   renderUserItem = ({ item }) => {
@@ -89,55 +152,79 @@ const TextMenu = ({ handleClose }) => {
             <TextInput
               style={styles.searchText}
               placeholder={"Search"}
-              onChangeText={(text) => setSearchQuery(text)}
+              onChangeText={(text) => handleSearch(text)}
             ></TextInput>
           </View>
         </View>
-        <View style={styles.OnlineListContainer}>
-          <FlatList
-            data={users}
-            renderItem={this.renderUserItem}
-            keyExtractor={(item) => item.id}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            snapToInterval={95}
-            snapToAlignment={"start"} // snap to the beginning of each item
-            decelerationRate={"fast"} // make the snapping feel fast
-            style={styles.SubItem}
-          />
-        </View>
-        <View style={styles.subMenuContainer}>
-          <View style={styles.subMenuHeader}>
-            <Text style={styles.subMenuTitle}>Groups</Text>
-            <TouchableOpacity>
-              <AntDesign name="plus" size={26} color="black" />
-            </TouchableOpacity>
+        {searchQuery ? (
+          // Show only the list of users when there is a search query
+          <View style={styles.subMenuContainer}>
+            {users.map((user) => (
+              <TouchableOpacity
+                key={user.id}
+                onPress={() => handleUserPress(user)}
+                style={styles.userContainer}
+              >
+                <Image
+                  source={require("../../assets/images/1slnr0.jpg")}
+                  style={styles.avatar}
+                />
+                <View style={styles.userDetails}>
+                  <Text style={styles.userName}>{user.username}</Text>
+                  <Text style={styles.lastMessage}>{user.lastMessage}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
           </View>
-          <Text style={styles.noteam}>You aren't in any groups or teams</Text>
-          <View style={styles.subMenu}>{/* List of groups */}</View>
-          <View style={styles.subMenuHeader}>
-            <Text style={styles.subMenuTitle}>Messages</Text>
-            <TouchableOpacity>
-              <AntDesign name="plus" size={26} color="black" />
-            </TouchableOpacity>
-          </View>
-          {users.map((user) => (
-            <TouchableOpacity
-              key={user.id}
-              onPress={() => handleUserPress(user)}
-              style={styles.userContainer}
-            >
-              <Image
-                source={require("../../assets/images/1slnr0.jpg")}
-                style={styles.avatar}
-              />
-              <View style={styles.userDetails}>
-                <Text style={styles.userName}>{user.username}</Text>
-                <Text style={styles.lastMessage}>Last message from user</Text>
+        ) : (
+          // Show groups and messages sections when there is no search query
+          <View>
+            <View style={styles.subMenuContainer}>
+              <View style={styles.subMenuHeader}>
+                <Text style={styles.subMenuTitle}>Groups</Text>
+                <TouchableOpacity>
+                  <AntDesign name="plus" size={26} color="black" />
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
-          ))}
-        </View>
+              <Text style={styles.noteam}>
+                You aren't in any groups or teams
+              </Text>
+              <View style={styles.subMenu}>{/* List of groups */}</View>
+            </View>
+            <View style={styles.subMenuContainer}>
+              <View style={styles.subMenuHeader}>
+                <Text style={styles.subMenuTitle}>Messages</Text>
+                <TouchableOpacity>
+                  <AntDesign name="plus" size={26} color="black" />
+                </TouchableOpacity>
+              </View>
+              {chats.map((user) => (
+                <TouchableOpacity
+                  key={user.id}
+                  onPress={() => handleUserPress(user)}
+                  style={styles.userContainer}
+                >
+                  <Image
+                    source={require("../../assets/images/1slnr0.jpg")}
+                    style={styles.avatar}
+                  />
+                  <View style={styles.userDetails}>
+                    <Text style={styles.userName}>{user.username}</Text>
+                    <Text style={styles.lastMessage}>{user.lastMessage}</Text>
+                  </View>
+                  <View style={styles.deleteButtonContainer}>
+                    <TouchableOpacity
+                      onPress={() => handleDeleteUser(user)}
+                      style={styles.deleteButton}
+                    >
+                      <FontAwesome name="trash-o" size={24} color="black" />
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
         <Modal
           animationType="slide"
           visible={selectedUser !== null}
@@ -167,8 +254,9 @@ const styles = {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    top: 30,
     paddingHorizontal: 20,
-    paddingVertical: 5,
+    paddingVertical: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
   },
@@ -188,7 +276,7 @@ const styles = {
     marginRight: 20,
     padding: 8,
     borderRadius: 5,
-    marginTop: 25,
+    marginTop: 85,
     height: 40,
   },
   searchContainer: {

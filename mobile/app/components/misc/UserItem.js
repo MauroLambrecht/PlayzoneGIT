@@ -1,49 +1,49 @@
+import { Pressable, Text, StyleSheet, Image, View } from "react-native";
 import React from "react";
-import { View, StyleSheet, Image } from "react-native";
-import UserStatus from "./UserStatus";
+import { AntDesign } from "@expo/vector-icons";
 
-const UserItem = ({ user }) => {
+const UserListItem = ({ user, onPress, isSelected = false }) => {
   return (
-    <View style={styles.userItem}>
-      <View style={styles.avatarContainer}>
-        <Image
-          source={require("../../assets/images/1slnr0.jpg")}
-          style={styles.userAvatar}
-        />
-        <View style={styles.statusContainer}>
-          <UserStatus status={"dnd"} />
-        </View>
+    <Pressable style={styles.root} onPress={() => onPress(user)}>
+      <Image
+        source={require("../../assets/images/1slnr0.jpg")}
+        style={styles.image}
+      />
+      <View style={styles.userInfo}>
+        <Text style={styles.name}>{user.name}</Text>
+        <Text style={styles.email}>{user.email}</Text>
       </View>
-    </View>
+      <View style={{ marginLeft: "auto" }}>
+        {isSelected && <AntDesign name="checkcircle" size={24} color="green" />}
+      </View>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
-  userItem: {
+  root: {
+    flexDirection: "row",
     alignItems: "center",
-    marginVertical: 5,
-    marginHorizontal: 3,
+    padding: 10,
   },
-  avatarContainer: {
-    position: "relative",
+  image: {
+    width: 50,
+    aspectRatio: 1,
+    borderRadius: 25,
+    marginRight: 10,
   },
-  userAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 50,
-  },
-  statusContainer: {
-    position: "absolute",
-    bottom: 2,
-    right: 2,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: "#2f3136",
+  userInfo: {
+    flex: 1,
+    flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
+  },
+  name: {
+    color: "black",
+    fontWeight: "bold",
+  },
+  email: {
+    color: "black",
   },
 });
 
-export default UserItem;
+export default UserListItem;

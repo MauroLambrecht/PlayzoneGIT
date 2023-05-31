@@ -20,7 +20,7 @@ const SignUpScreen1 = () => {
   const navigation = useNavigation();
 
   const handleNext = () => {
-    navigation.navigate("SignUpScreen2", {
+    navigation.navigate("SignupScreen2", {
       firstName,
       lastName,
       email,
@@ -29,22 +29,21 @@ const SignUpScreen1 = () => {
   };
 
   return (
-    <ImageBackground
-      style={styles.container}
-      source={require("../../assets/images/8k.png")}
-    >
+    <View style={styles.container}>
       <Text style={styles.title}>Create an account</Text>
       <TextInput
         underlineColor="orange"
         style={styles.input}
         placeholder="First Name"
         onChangeText={(text) => setFirstName(text)}
+        value={firstName}
       />
       <TextInput
         underlineColor="orange"
         style={styles.input}
         placeholder="Last Name"
         onChangeText={(text) => setLastName(text)}
+        value={lastName}
       />
       <TextInput
         underlineColor="orange"
@@ -52,12 +51,14 @@ const SignUpScreen1 = () => {
         placeholder="Email"
         keyboardType="email-address"
         onChangeText={(text) => setEmail(text)}
+        value={email}
       />
       <TextInput
         underlineColor="orange"
         style={styles.input}
         placeholder="Date of Birth (MM/DD/YYYY)"
         onChangeText={(text) => setDob(text)}
+        value={dob}
       />
 
       <View style={styles.center}>
@@ -74,7 +75,7 @@ const SignUpScreen1 = () => {
           <Text style={styles.orange}>Log in</Text>
         </TouchableOpacity>
       </View>
-    </ImageBackground>
+    </View>
   );
 };
 

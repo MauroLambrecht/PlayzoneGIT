@@ -1,50 +1,83 @@
 import React, { useEffect, useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-  View,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Modal,
-  Text,
-} from "react-native";
+import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import {
   Ionicons,
   MaterialCommunityIcons,
   AntDesign,
-  FontAwesome,
-  Feather,
 } from "@expo/vector-icons";
 
+// *********[ COMPONENT IMPORTS ] *********
 import HomeScreen from "../screens/Main/HomeScreen.js";
 import LogScreen from "../screens/Main/LogScreen.js";
 import PlayScreen from "../screens/Main/PlayScreen.js";
 import RankScreen from "../screens/Main/RankScreen.js";
 import ProfileDrawer from "./DrawerNavigator.js";
-import Overlay from "../components/overlay.js";
-import TextMenu from "../components/ChatModal.js";
-import AccountScreenStats from "../screens/Main/AccountScreen_Stats.js";
-import AccountScreenClub from "../screens/Main/AccountScreen_Club.js";
+import Overlay from "../components/utils/overlay.js";
+import ChannelScreen from "../screens/Main/ChannelScreen.js";
 import AccountScreenPlayer from "../screens/Main/AccountScreen_Player.js";
+import Settings from "../screens/Main/Settings.js";
+import TextMenu from "../screens/Main/ChannelListScreen.js";
+import CreateGame from "../screens/Main/CreateGame.js";
+import CreateGameFase2 from "../screens/Main/CreateGameFase2.js";
+import GameScreen from "../screens/Main/GameScreen.js";
 
 import { useProjectFonts } from "../config/fonts.js";
-import { GradientText } from "../components/GradientComp.js";
+import { GradientText } from "../components/misc/GradientComp.js";
+import { useNavigation } from "@react-navigation/native";
+import { CachedImage } from "expo-cached-image";
 import Colors from "../config/colors.js";
-import SettingsPage from "../screens/Settings/Settings.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import instance from "../services/index.js";
+
+import * as FileSystem from "expo-file-system";
+import AccountScreenStats from "../screens/Main/AccountScreen_Stats.js";
+import AccountScreenClub from "../screens/Main/AccountScreen_Club.js";
 
 const Tab = createBottomTabNavigator();
-const HomeStack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator();
 
-const HomeNavigator = ({ handleLogout }) => {
+const HomeNavigator = ({ handleLogout, inPlayScreen }) => {
   const fontsLoaded = useProjectFonts();
   const [showSubMenu, setShowSubMenu] = useState(false);
   const [showTextMenu, setShowTextMenu] = useState(false);
+  const [profilePictureUri, setProfilePictureUri] = useState(null);
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      try {
+        const cachedPicture = await AsyncStorage.getItem("profilePicture");
+
+        if (!cachedPicture) {
+          const token = await AsyncStorage.getItem("userToken");
+          const response = await instance.get("/getProfilePicture", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const base64String = `data:image/jpeg;base64,${response.data}`;
+          await AsyncStorage.setItem("profilePicture", base64String);
+          setProfilePictureUri(cachedPicture);
+        }
+
+        setProfilePictureUri(cachedPicture);
+      } catch (error) {
+        console.error("Error fetching profile picture:", error);
+      }
+    };
+
+    getUserInfo();
+  }, []);
+
+  const navigation = useNavigation();
 
   if (!fontsLoaded) {
     return undefined;
   }
 
+  // *********[ HEADER RIGHT COMPONENT ] *********
   const headerOptions = {
     headerStyle: styles.header,
     headerTitleStyle: styles.title,
@@ -61,7 +94,7 @@ const HomeNavigator = ({ handleLogout }) => {
           />
         </TouchableOpacity>
         {/* if no notifications: <MaterialCommunityIcons name="bell-check-outline" size={24} color="black" /> */}
-        <TouchableOpacity onPress={() => setShowTextMenu(true)}>
+        <TouchableOpacity onPress={() => navigation.navigate("ChannelList")}>
           <AntDesign
             name="message1"
             size={26}
@@ -71,131 +104,209 @@ const HomeNavigator = ({ handleLogout }) => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => setShowSubMenu(true)}>
-          <Image
-            source={require("../assets/images/1slnr0.jpg")}
-            style={styles.profile}
-          />
+          {profilePictureUri ? (
+            <Image source={{ uri: profilePictureUri }} style={styles.profile} />
+          ) : (
+            <Image
+              source={require("../assets/images/1slnr0.jpg")}
+              style={styles.profile}
+            />
+          )}
         </TouchableOpacity>
         <View>
           {showSubMenu && (
             <ProfileDrawer
               isOpen={showSubMenu}
+              handleLogout={handleLogout}
               onClose={() => setShowSubMenu(false)}
             />
           )}
           {/* Main component content */}
         </View>
-
-        <Modal visible={showTextMenu} animationType="fade">
-          <TextMenu
-            handleClose={() => setShowTextMenu(false)}
-            handleLogout={handleLogout}
-          />
-        </Modal>
       </View>
     ),
   };
+
+  const headerOptionsWithTabs = {
+    headerStyle: {
+      backgroundColor: Colors.primary,
+    },
+    headerTintColor: Colors.white,
+    headerTitleStyle: {
+      fontWeight: "bold",
+    },
+    headerTitleAlign: "center",
+    headerLeft: () => (
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={{ paddingLeft: 10 }}
+      >
+        <Ionicons name="chevron-back" size={24} color="black" />
+      </TouchableOpacity>
+    ),
+  };
+
+  // ********* [ MAIN NAVIGATOR ] *********
   return (
     <View style={styles.container}>
       <Tab.Navigator
         screenOptions={() => ({
           tabBarLabelStyle: styles.labelStyle,
+
+          /* TODO: set headershown relative to wether or not in create game screen */
+          headerShown: true,
+
+          // ********* [ HEADER LEFT ] *********
+          headerTitle: () => (
+            <View style={styles.centerTitle}>
+              <GradientText text="Playzone" style={styles.title} />
+            </View>
+          ),
+
+          // *********[ HEADER RIGHT ] *********
         })}
       >
         <Tab.Screen
           name="Home"
+          component={HomeScreen}
           options={{
-            headerShown: true,
-            headerTitle: () => (
-              <View style={styles.centerTitle}>
-                <GradientText text="Home" style={styles.title} />
-              </View>
+            tabBarIcon: ({ focused }) => (
+              <Ionicons
+                name={"home"}
+                size={30}
+                color={focused ? Colors.orange : "grey"}
+              />
             ),
             ...headerOptions,
-            tabBarIcon: () => (
-              <Ionicons name="home" size={24} color={Colors.orange} />
-            ),
           }}
-        >
-          {() => <HomeScreen />}
-        </Tab.Screen>
+        />
         <Tab.Screen
           name="Rank"
-          labelStyle={{ display: "none" }}
+          component={RankScreen}
           options={{
-            headerShown: true,
-            headerTitle: () => (
-              <View style={styles.centerTitle}>
-                <GradientText text="Rank" style={styles.title} />
-              </View>
-            ),
-            ...headerOptions,
-            tabBarIcon: () => (
+            tabBarIcon: ({ focused }) => (
               <MaterialCommunityIcons
-                name="chart-bar"
-                size={26}
-                color={Colors.orange}
+                name={"chart-bar"}
+                size={30}
+                color={focused ? Colors.orange : "grey"}
               />
             ),
+            ...headerOptions,
           }}
-        >
-          {() => <RankScreen />}
-        </Tab.Screen>
+        />
         <Tab.Screen
           name="Play"
+          component={PlayScreen}
           options={{
-            headerShown: true,
-            headerTitle: () => (
-              <View style={styles.centerTitle}>
-                <GradientText text="Play" style={styles.title} />
-              </View>
+            tabBarIcon: ({ focused }) => (
+              <Ionicons
+                name="basketball"
+                size={40}
+                color={focused ? Colors.orange : "gray"}
+              />
             ),
             ...headerOptions,
-            tabBarIcon: () => (
-              <Ionicons name="basketball" size={40} color={Colors.orange} />
-            ),
           }}
-        >
-          {(props) => <PlayScreen {...props} handleLogout={handleLogout} />}
-        </Tab.Screen>
+        />
+        <Tab.Screen
+          name="CreateGame"
+          component={CreateGame}
+          options={{
+            ...headerOptionsWithTabs,
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+        <Tab.Screen
+          name="CreateGameFase2"
+          component={CreateGameFase2}
+          options={{
+            ...headerOptionsWithTabs,
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+        <Tab.Screen
+          name="GameScreen"
+          component={GameScreen}
+          options={{
+            ...headerOptionsWithTabs,
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+
         <Tab.Screen
           name="Log"
+          component={LogScreen}
           options={{
-            headerShown: true,
-            headerTitle: () => (
-              <View style={styles.centerTitle}>
-                <GradientText text="Log" style={styles.title} />
-              </View>
-            ),
-            ...headerOptions,
-            tabBarIcon: () => (
+            tabBarIcon: ({ focused }) => (
               <Ionicons
-                name="newspaper-sharp"
-                size={24}
-                color={Colors.orange}
+                name={"newspaper-sharp"}
+                size={30}
+                color={focused ? Colors.orange : "grey"}
               />
             ),
+            ...headerOptions,
           }}
-        >
-          {() => <LogScreen />}
-        </Tab.Screen>
+        />
         <Tab.Screen
           name="Account"
+          component={AccountScreenStats}
           options={{
             headerShown: false,
-            ...headerOptions,
-            tabBarIcon: () => (
+            tabBarIcon: ({ focused }) => (
               <MaterialCommunityIcons
-                name="account-circle"
+                name={"account-circle"}
                 size={30}
-                color={Colors.orange}
+                color={focused ? Colors.orange : "grey"}
               />
             ),
+            ...headerOptions,
           }}
-        >
-          {() => <AccountScreenStats />}
-        </Tab.Screen>
+        />
+        <Tab.Screen
+          name="Settings"
+          component={Settings}
+          options={{
+            ...headerOptionsWithTabs,
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+        <Tab.Screen
+          name="ChannelList"
+          component={TextMenu}
+          options={{
+            headerShown: false,
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: "none",
+            },
+          }}
+        />
+        <Tab.Screen
+          name="Channel"
+          component={ChannelScreen}
+          options={{
+            headerShown: true,
+            tabBarButton: () => null,
+            tabBarStyle: {
+              display: "none",
+            },
+            ...headerOptionsWithTabs,
+          }}
+        />
       </Tab.Navigator>
+
       <Overlay visible={showSubMenu} onPress={() => setShowSubMenu(false)} />
     </View>
   );
@@ -229,6 +340,10 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginHorizontal: 10,
+  },
+  SelectedTab: {
+    width: 30,
+    height: 50,
   },
   profile: {
     width: 40,

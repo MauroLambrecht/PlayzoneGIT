@@ -5,105 +5,52 @@ import {
   View,
   Text,
   ScrollView,
+  Image,
 } from "react-native";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import Colors from "../../config/colors";
-import { GradientText } from "../../components/GradientComp";
-
-const DAYS_IN_WEEK = 7;
-const DAYS_IN_MONTH = 31;
+import { GradientText } from "../../components/misc/GradientComp.js";
+import ActiveGame from "../../components/sections/ActiveGames.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import instance from "../../services";
 
 const HomeScreen = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [playerData, setPlayerData] = useState([]);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentDate(new Date());
-    }, 1000 * 60 * 60); // update current date every hour
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const currentMonth = currentDate.getMonth();
-  const currentYear = currentDate.getFullYear();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-
-  const calendarDays = [];
-  let dayCount = 1;
-
-  for (let i = 0; i < 6; i++) {
-    const weekDays = [];
-    for (let j = 0; j < DAYS_IN_WEEK; j++) {
-      if (i === 0 && j < firstDayOfMonth) {
-        weekDays.push(<View style={styles.emptyDay} key={`${i}-${j}`} />);
-      } else if (dayCount <= daysInMonth) {
-        const dayStyle =
-          currentDate.getDate() === dayCount &&
-          currentDate.getMonth() === currentMonth &&
-          currentDate.getFullYear() === currentYear
-            ? styles.currentDay
-            : styles.day;
-        weekDays.push(
-          <View style={dayStyle} key={`${i}-${j}`}>
-            <Text style={styles.dayText}>{dayCount}</Text>
-          </View>
-        );
-        dayCount++;
-      } else {
-        weekDays.push(<View style={styles.emptyDay} key={`${i}-${j}`} />);
+    const fetchPlayerData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("userToken");
+        const response = await instance.get("/mygames", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const myPlayerData = response.data;
+        setPlayerData(myPlayerData);
+      } catch (error) {
+        setPlayerData([]);
       }
-    }
-    calendarDays.push(
-      <View style={styles.week} key={i}>
-        {weekDays}
-      </View>
-    );
-  }
+    };
+    fetchPlayerData();
+  }, []);
 
   return (
     <View style={styles.container}>
-      <View style={styles.row}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Friendly</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Competitive</Text>
-        </TouchableOpacity>
+      <View style={styles.header}>
+        <FontAwesome name="gamepad" size={48} color={Colors.primary} />
+        <Text style={styles.title}>Your Games</Text>
       </View>
       <ScrollView>
-        <View style={styles.title}>
-          <Ionicons name="ios-add-circle" size={24} color="black" />
-          <Text style={styles.titletext}>Add item</Text>
-        </View>
-        <View style={styles.containercalendar}>
-          <Text style={styles.monthText}>
-            {currentDate.toLocaleString("default", { month: "long" })}{" "}
-            {currentYear}
-          </Text>
-          <View style={styles.daysOfWeek}>
-            <Text style={styles.dayOfWeekText}>Sun</Text>
-            <Text style={styles.dayOfWeekText}>Mon</Text>
-            <Text style={styles.dayOfWeekText}>Tue</Text>
-            <Text style={styles.dayOfWeekText}>Wed</Text>
-            <Text style={styles.dayOfWeekText}>Thu</Text>
-            <Text style={styles.dayOfWeekText}>Fri</Text>
-            <Text style={styles.dayOfWeekText}>Sat</Text>
-          </View>
-          {calendarDays}
-        </View>
-        <View style={styles.title}>
-          <GradientText
-            text={"This Week"}
-            style={styles.Gradient}
-          ></GradientText>
-          <FontAwesome
-            name="sliders"
-            size={24}
-            color="gray"
-            style={styles.settings}
-          />
-        </View>
+        {playerData.map((game) => (
+          <ActiveGame key={game.IDGame} game={game} />
+        ))}
       </ScrollView>
+      <TouchableOpacity style={styles.addButton}>
+        <Ionicons name="add" size={24} color="white" />
+        <Text style={styles.buttonText}>Add Game</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.settingsButton}>
+        <Ionicons name="settings" size={24} color={Colors.primary} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -111,100 +58,41 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.background,
   },
-  row: {
+  header: {
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
-    marginTop: 40,
-  },
-  settings: {
-    marginLeft: 10,
-    verticalAlign: "middle",
-    justifyContent: "center",
+    marginVertical: 20,
+    marginHorizontal: 20,
   },
   title: {
-    flexDirection: "row",
-    marginLeft: "7%",
-    marginTop: 40,
-  },
-  button: {
-    borderRadius: 5,
-    marginHorizontal: 10,
-    width: "38%",
-    paddingVertical: 15,
-    backgroundColor: "#ddd",
-  },
-  buttonText: {
-    fontSize: 16,
-    color: "#333",
-    textAlign: "center",
+    fontSize: 32,
+    color: Colors.primary,
     fontFamily: "QuicksandBold",
-  },
-  titletext: {
-    fontSize: 14,
-    color: "#333",
-    textAlign: "center",
-    fontFamily: "QuicksandSemi",
     marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 20,
-    textDecorationLine: "underline",
   },
-  containercalendar: {
-    backgroundColor: "#fff",
-    padding: 10,
+  addButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.primary,
     borderRadius: 10,
-    width: "80%",
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    marginVertical: 20,
     alignSelf: "center",
   },
-  monthText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 10,
-    textAlign: "center",
+  buttonText: {
+    fontSize: 18,
+    color: "white",
+    fontFamily: "QuicksandSemi",
+    marginLeft: 10,
   },
-  daysOfWeek: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
-  },
-  dayOfWeekText: {
-    fontSize: 10,
-    fontWeight: "bold",
-  },
-  week: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 5,
-  },
-  day: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  emptyDay: {
-    width: 40,
-    height: 40,
-  },
-  dayText: {
-    fontSize: 14,
-  },
-  currentDay: {
-    width: 40,
-    height: 40,
-    borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  Gradient: {
-    fontSize: 20,
-    fontFamily: "QuicksandBold",
+  settingsButton: {
+    position: "absolute",
+    top: 30,
+    right: 20,
   },
 });
 

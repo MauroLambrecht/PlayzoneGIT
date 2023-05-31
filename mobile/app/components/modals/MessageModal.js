@@ -7,28 +7,18 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  SafeAreaView,
 } from "react-native";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import Pusher from "pusher-js/react-native";
 import getMessages from "../../services/pusher/getMessages";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MessageModal = ({ isOpen, onClose, currentUser }) => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [pusher, setPusher] = useState(null);
-
-  const handleMessageSend = () => {
-    // Send the message using Pusher
-    const channel = pusher.subscribe("messages");
-    channel.trigger("client-new-message", {
-      message,
-      currentUser,
-    });
-
-    // Add the message to the local state
-    setMessages([...messages, { text: message, isOwnMessage: true }]);
-    setMessage("");
-  };
+  const [usersData, setUsersData] = useState([]);
 
   useEffect(() => {
     // Initialize Pusher when the component mounts
@@ -39,10 +29,14 @@ const MessageModal = ({ isOpen, onClose, currentUser }) => {
     setPusher(pusher);
 
     // Subscribe to the "messages" channel
-    const channel = pusher.subscribe("messages");
+    const channelName = `private-1`;
+    const channel = pusher.subscribe(channelName);
+
+    console.log(`Subscribed to channel "${channelName}"`);
 
     // Bind the "new-message" event to update the local state
     channel.bind("new-message", ({ message, sender }) => {
+      console.log("Received new message:", message, "from sender:", sender);
       setMessages([...messages, { text: message, isOwnMessage: false }]);
     });
 
@@ -58,8 +52,48 @@ const MessageModal = ({ isOpen, onClose, currentUser }) => {
     getMessages();
   }, []);
 
+  const handleMessageSend = () => {
+    // Send the message using Pusher
+    const channel = pusher.subscribe(`private-1`);
+    console.log(`Triggering "client-new-message" event on channel "private-1"`);
+    channel.trigger("client-new-message", {
+      message,
+      sender: "m4",
+      receiver: currentUser[0].username,
+    });
+
+    // Add the message to the local state
+    setMessages([...messages, { text: message, isOwnMessage: true }]);
+
+    // Save user data to AsyncStorage
+    const userData = {
+      id: currentUser[0].id,
+      username: currentUser[0].username,
+      lastMessage: message,
+    };
+    AsyncStorage.getItem("usersData")
+      .then((data) => {
+        let usersData = [];
+        if (data) {
+          usersData = JSON.parse(data);
+        }
+        const existingUserIndex = usersData.findIndex(
+          (u) => u.id === currentUser[0].id
+        );
+        if (existingUserIndex !== -1) {
+          usersData[existingUserIndex].lastMessage = message;
+        } else {
+          usersData.push(userData);
+        }
+        AsyncStorage.setItem("usersData", JSON.stringify(usersData));
+      })
+      .catch((error) => console.error(error));
+
+    setMessage("");
+  };
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onClose}>
           <Feather name="arrow-left" size={24} color="black" />
@@ -70,7 +104,7 @@ const MessageModal = ({ isOpen, onClose, currentUser }) => {
             style={styles.profilePic}
           />
           <View style={styles.headerText}>
-            <Text style={styles.name}>username</Text>
+            <Text style={styles.name}>{currentUser[0].username}</Text>
             <Text style={styles.username}>@username</Text>
           </View>
         </View>
@@ -126,7 +160,7 @@ const MessageModal = ({ isOpen, onClose, currentUser }) => {
           <Feather name="send" size={24} color="black" />
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

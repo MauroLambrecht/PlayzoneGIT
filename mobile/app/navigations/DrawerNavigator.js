@@ -1,11 +1,10 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 
 import {
   View,
   Text,
   TouchableOpacity,
   Image,
-  ScrollView,
   Modal,
   StyleSheet,
   Animated,
@@ -20,11 +19,27 @@ import Colors from "../config/colors";
 
 import { useNavigation } from "@react-navigation/native";
 import SettingsPage from "../screens/Settings/Settings.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProfileDrawer = ({ handleLogout, visible, onClose }) => {
+  const [account, setAccount] = useState();
+  const [profilePicture, setProfilePicture] = useState();
   const slideAnim = useRef(new Animated.Value(-300)).current;
-
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      const userObject = await AsyncStorage.getItem("user");
+      const parsedUserObject = JSON.parse(userObject); // Parse the JSON string into an object
+      setAccount(parsedUserObject);
+
+      const cachedPicture = await AsyncStorage.getItem("profilePicture");
+      if (cachedPicture) {
+        setProfilePicture(cachedPicture);
+      }
+    };
+    getUserInfo();
+  }, []);
 
   useEffect(() => {
     Animated.timing(slideAnim, {
@@ -52,13 +67,20 @@ const ProfileDrawer = ({ handleLogout, visible, onClose }) => {
             <AntDesign name="close" size={24} color="gray" />
           </TouchableOpacity>
           <View style={styles.header}>
-            <Image
-              source={require("../assets/images/1slnr0.jpg")}
-              style={styles.profileImage}
-            />
+            {profilePicture ? (
+              <Image
+                source={{ uri: profilePicture }}
+                style={styles.profileImage}
+              />
+            ) : (
+              <Image
+                source={require("../assets/images/1slnr0.jpg")}
+                style={styles.profileImage}
+              />
+            )}
             <View>
-              <Text style={styles.profileName}>John Doe</Text>
-              <Text style={styles.profileTag}>@johndoe</Text>
+              <Text style={styles.profileName}>{account?.username}</Text>
+              <Text style={styles.profileTag}>{account?.email}</Text>
             </View>
           </View>
           <View style={styles.profileInfo}>
@@ -74,7 +96,13 @@ const ProfileDrawer = ({ handleLogout, visible, onClose }) => {
             </View>
           </View>
           <View style={styles.line} />
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              navigation.navigate("Account");
+              handleOnClose();
+            }}
+          >
             <Ionicons name="person-circle-outline" size={24} color="gray" />
             <Text style={styles.buttonText}>Profile</Text>
           </TouchableOpacity>
@@ -104,7 +132,10 @@ const ProfileDrawer = ({ handleLogout, visible, onClose }) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate("Settings")}
+            onPress={() => {
+              navigation.navigate("Settings");
+              handleOnClose();
+            }}
           >
             <Ionicons name="settings-outline" size={24} color="gray" />
             <Text style={styles.buttonText}>Preferences</Text>
@@ -112,7 +143,10 @@ const ProfileDrawer = ({ handleLogout, visible, onClose }) => {
         </View>
         <View style={styles.bottom}>
           <View style={styles.line} />
-          <TouchableOpacity style={styles.button} onPress={handleLogout}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleLogout()}
+          >
             <Entypo
               name="log-out"
               size={24}
@@ -140,8 +174,9 @@ const styles = StyleSheet.create({
     paddingTop: 80,
     paddingLeft: 20,
   },
+
   fix: {
-    top: "-10%",
+    top: "0%",
   },
   header: {
     flexDirection: "row",
@@ -155,8 +190,12 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     padding: 10,
-    right: "-80%",
-    top: "2%",
+    position: "absolute",
+    left: "100%",
+    top: "70%",
+    backgroundColor: Colors.white,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
   },
   profileImage: {
     width: 70,
