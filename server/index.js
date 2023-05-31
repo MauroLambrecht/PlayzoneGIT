@@ -27,4 +27,4 @@ app.use(router);
 
 sequelize.sync();
 
-app.listen(port, () => console.log(`Listening on Port ${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`Listening on Port ${port}`));

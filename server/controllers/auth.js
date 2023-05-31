@@ -1,6 +1,11 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.js");
+const { StreamChat } = require("stream-chat");
+const apiKey = "ngdaaxg4xenm";
+const apiSecret =
+  "vc2qxxpwebfeh7gtrrnugw7q3h4efgenwecw6n82ech35tw4t88r6wrmnggw7dvm";
+const streamClient = new StreamChat(apiKey, apiSecret);
 
 require("dotenv").config();
 const jwtSecret = process.env.JWT_SECRET;
@@ -20,10 +25,16 @@ const signup = async (req, res, next) => {
     if (!req.body.username) {
       return res.status(400).json({ message: "Username not provided" });
     }
+    if (!req.body.firstName) {
+      return res.status(400).json({ message: "First name not provided" });
+    }
+    if (!req.body.lastName) {
+      return res.status(400).json({ message: "Last name not provided" });
+    }
     const passwordHash = await bcrypt.hash(req.body.password, 12);
     await User.create({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
+      firstname: req.body.firstName,
+      lastname: req.body.lastName,
       email: req.body.email,
       username: req.body.username,
       password: passwordHash,
@@ -59,7 +70,16 @@ const login = async (req, res, next) => {
         expiresIn: "24h",
       }
     );
-    return res.status(200).json({ message: "User logged in", token });
+
+    const { IDUser, firstname, lastname, username, email } = dbUser;
+    const chatToken = streamClient.createToken(email);
+
+    return res.status(200).json({
+      message: "User logged in",
+      token,
+      chatToken,
+      user: { IDUser, firstname, lastname, username, email },
+    });
   } catch (err) {
     console.error(err);
     return res.status(502).json({ message: "Error while logging in" });

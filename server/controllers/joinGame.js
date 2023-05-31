@@ -31,8 +31,8 @@ exports.joinGame = async (req, res) => {
     // Check if the user has already joined the game
     const existingGamePlayer = await GamePlayer.findOne({
       where: {
-        IDUser: userID,
-        IDGame: gameId,
+        tbluserIDUser: userID,
+        tblgameIDGame: gameId,
       },
     });
     if (existingGamePlayer) {
@@ -43,8 +43,8 @@ exports.joinGame = async (req, res) => {
 
     // Add the record to the game_player table
     await GamePlayer.create({
-      IDGame: gameId,
-      IDUser: userID,
+      tblgameIDGame: gameId,
+      tbluserIDUser: userID,
     });
 
     // Update the currentPlayers count

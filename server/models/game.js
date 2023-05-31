@@ -10,8 +10,8 @@ const Game = sequelize.define("tblgames", {
     allowNull: false,
   },
   gameType: {
-    type: DataTypes.ENUM("friendly", "competition"),
-    defaultValue: "friendly",
+    type: DataTypes.ENUM("match", "freeplay", "shooting"),
+    defaultValue: "match",
     allowNull: false,
   },
   gameStyle: {
@@ -39,10 +39,30 @@ const Game = sequelize.define("tblgames", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  scoresThuisploeg: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  scoresBezoekers: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  finished: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+  },
+  extraInfo: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 // Define the association between Game and User models
-Game.belongsToMany(User, { through: "game_player" });
-User.belongsToMany(Game, { through: "game_player" });
+Game.belongsToMany(User, { through: "game_players", as: "Players" });
+User.belongsToMany(Game, { through: "game_players", as: "Games" });
 
 module.exports = Game;

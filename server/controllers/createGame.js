@@ -4,8 +4,10 @@ const Game = require("../models/game");
 exports.createGame = async (req, res, next) => {
   const userID = req.userData.IDUser;
 
-  //get the body
-  const { gameType, gameStyle, location, time } = req.body;
+  console.log(req.userData);
+
+  // Get the body
+  const { gameType, gameStyle, location, time, title, extraInfo } = req.body;
   let maxPlayers;
 
   if (gameStyle === "1v1") maxPlayers = 2;
@@ -14,19 +16,19 @@ exports.createGame = async (req, res, next) => {
   if (gameStyle === "4v4") maxPlayers = 8;
   if (gameStyle === "5v5") maxPlayers = 10;
 
-  //find all my games
+  // Find all my games
   const openGames = await Game.findAll({
     where: {
       createdBy: userID,
     },
   });
-  if (openGames.length >= 3) {
+  if (openGames.length >= 100) {
     return res.status(400).json({
       message: "You can't create a new game. You already have 3 open games.",
     });
   }
 
-  //create the game
+  // Create the game
   Game.create({
     gameType: gameType,
     gameStyle: gameStyle,
@@ -34,12 +36,14 @@ exports.createGame = async (req, res, next) => {
     time: time,
     maxPlayers: maxPlayers,
     createdBy: userID,
+    title: title,
+    extraInfo: extraInfo,
   })
-    //add player to game
+    // Add player to game
     .then((newGame) => {
       GamePlayer.create({
-        IDGame: newGame.IDGame,
-        IDUser: userID,
+        tblgameIDGame: newGame.IDGame,
+        tbluserIDUser: userID,
       }).then(() => {
         res.status(201).json({
           message: "Game created successfully",

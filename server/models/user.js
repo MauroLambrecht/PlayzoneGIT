@@ -63,6 +63,10 @@ const User = sequelize.define("tblusers", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  profilePicture: {
+    type: DataTypes.BLOB,
+    allowNull: true,
+  },
 });
 
 User.beforeCreate(async (user) => {

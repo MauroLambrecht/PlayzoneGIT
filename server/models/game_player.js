@@ -1,5 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../utils/database");
+
+// Reorder the require statements
 const Game = require("./game");
 const User = require("./user");
 
@@ -10,7 +12,8 @@ const GamePlayer = sequelize.define("game_players", {
     autoIncrement: true,
     allowNull: false,
   },
-  IDGame: {
+  tblgameIDGame: {
+    // Update the column name
     type: DataTypes.INTEGER,
     references: {
       model: Game,
@@ -20,7 +23,8 @@ const GamePlayer = sequelize.define("game_players", {
     onDelete: "cascade",
     allowNull: false,
   },
-  IDUser: {
+  tbluserIDUser: {
+    // Update the column name
     type: DataTypes.INTEGER,
     references: {
       model: User,
