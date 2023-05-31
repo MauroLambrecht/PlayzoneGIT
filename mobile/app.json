@@ -1,36 +1,30 @@
 {
   "expo": {
-    "name": "playzone2.0",
-    "slug": "playzone-app",
+    "name": "playzone3.0",
+    "slug": "playzone3.0",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
     "splash": {
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.android.playzone"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#FFFFFF"
-      },
-      "package": "com.android.playzone"
-    },
-    "web": {},
-    "extra": {
-      "eas": {
-        "projectId": "ae8be41e-cfff-4ecc-b8fd-d7a539de0691"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
       }
     },
-    "owner": "playzone2.0"
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
   }
 }
