@@ -34,6 +34,17 @@ const GamePlayer = sequelize.define("game_players", {
     onDelete: "cascade",
     allowNull: false,
   },
+  teamSide: {
+    type: DataTypes.ENUM("home", "out"),
+    defaultValue: "home",
+    allowNull: false,
+  },
+  winner: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+  },
 });
+
+GamePlayer.belongsTo(User, { foreignKey: "tbluserIDUser" });
 
 module.exports = GamePlayer;

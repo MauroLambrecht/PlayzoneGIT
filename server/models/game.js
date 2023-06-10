@@ -54,6 +54,7 @@ const Game = sequelize.define("tblgames", {
   finished: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
+    defaultValue: false,
   },
   extraInfo: {
     type: DataTypes.STRING,

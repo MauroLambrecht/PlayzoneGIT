@@ -23,6 +23,15 @@ app.use((_, res, next) => {
   next();
 });
 
+app.get("/joinlink/:gameId", (req, res) => {
+  const { gameId } = req.params;
+  console.log(gameId); // Check if the gameId is logged correctly
+
+  // Redirect to the deep link URL with the game ID
+  const deepLinkUrl = `playzone://joinGame/${gameId}`;
+  res.redirect(deepLinkUrl);
+});
+
 app.use(router);
 
 sequelize.sync();

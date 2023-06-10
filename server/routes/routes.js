@@ -1,15 +1,41 @@
 const express = require("express");
 
 //MIDDLEWARE
-const { checkAuth } = require("../middleware/JWTAuthenticator");
+const { checkAuth } = require("../middleware/checkAuth");
 
 //CONTROLLERS
 const { login, signup } = require("../controllers/_Authentication");
-const { getLeaderboard } = require("../controllers/_Public");
-const { createGame, leaveGame, deleteGame, joinGame, updateScore, getMyGames, getOtherGames, getGame, getfinishedGame } = require("../controllers/GameController");
-const { createMessage, deleteMessage, updateMessage, getMessages } = require("../controllers/MessageController");
-const { checkPassword, changeUser, changeEmail, changePassword, changeProfilePicture, searchUsersByName, getUserInfo, getOtherUserInfo, getProfilePicture } = require("../controllers/UserController");
-const { getAllLocations } = require("../controllers/LocationController")
+const { getLeaderboard, getAllLocations } = require("../controllers/_Public");
+const {
+  createGame,
+  leaveGame,
+  deleteGame,
+  joinGame,
+  updateScore,
+  getMyGames,
+  getOtherGames,
+  getGame,
+  getfinishedGame,
+  endGame,
+} = require("../controllers/GameController");
+const {
+  createMessage,
+  deleteMessage,
+  updateMessage,
+  getMessages,
+} = require("../controllers/MessageController");
+const {
+  checkPassword,
+  changeUser,
+  changeEmail,
+  changePassword,
+  changeProfilePicture,
+  searchUsersByName,
+  getUserInfo,
+  getOtherUserInfo,
+  getProfilePicture,
+  getOtherProfilePicture,
+} = require("../controllers/UserController");
 
 const router = express.Router();
 
@@ -33,6 +59,7 @@ router.patch("/changeemail", checkAuth, changeEmail);
 router.patch("/changepassword", checkAuth, changePassword);
 router.patch("/changeprofilepicture", checkAuth, changeProfilePicture);
 router.patch("/updateMessage", checkAuth, updateMessage);
+router.patch("/endgame", checkAuth, endGame);
 
 //read
 router.get("/mygames", checkAuth, getMyGames);
@@ -44,6 +71,7 @@ router.get("/account", checkAuth, getUserInfo);
 router.get("/account/:IDUser", checkAuth, getOtherUserInfo);
 router.get("/getMessage", checkAuth, getMessages);
 router.get("/getProfilePicture", checkAuth, getProfilePicture);
+router.get("/getProfilePicture/:IDUser", checkAuth, getOtherProfilePicture);
 router.get("/getLocations", getAllLocations);
 router.get("/getfinishedGame", checkAuth, getfinishedGame);
 
