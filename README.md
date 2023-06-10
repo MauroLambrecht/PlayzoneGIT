@@ -6,7 +6,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/MauroLambrecht/PlayzoneGIT/">
-    <img src="mobile/app/assets/images/m6.png" alt="Logo" width="160" height="240">
+    <img src="mobile/app/assets/images/m6.png" alt="Logo" width="240" height="240">
   </a>
 
   <h3 align="center">PlayZone Basketball app</h3>
