@@ -68,7 +68,7 @@ const Login = ({ handleLogin }) => {
         />
       </View>
       <Text style={styles.orText}>OR</Text>
-      <View style={styles.socialContainer}>
+      {/* <View style={styles.socialContainer}>
         <TouchableOpacity onPress={() => console.log("Facebook")}>
           <Image
             source={require("../../assets/images/FaceIcon.png")}
@@ -81,7 +81,7 @@ const Login = ({ handleLogin }) => {
             style={styles.socialIcon}
           />
         </TouchableOpacity>
-      </View>
+      </View> */}
       <View style={styles.row}>
         <Text style={styles.Register}>Don't have an account yet? </Text>
         <TouchableOpacity

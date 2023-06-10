@@ -1,11 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  ScrollView,
+  TouchableOpacity,
+  Share,
+} from "react-native";
 import instance from "../../services";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Colors from "../../config/colors";
 
 const GameEnded = () => {
   const [gameInfo, setGameInfo] = useState(null);
+  const [account, setAccount] = useState(null);
+  const [URL, setURL] = useState("");
+
   const navigation = useNavigation();
 
   const routes = useRoute();
@@ -20,7 +32,7 @@ const GameEnded = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = response.data;
-        console.log(response.data);
+
         setGameInfo(data);
       } catch (error) {
         console.log("Error fetching game information:", error);
@@ -30,47 +42,148 @@ const GameEnded = () => {
     fetchGameInfo();
   }, [gameId]);
 
-  if (!gameInfo) {
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        if (gameInfo && gameInfo.game.createdBy) {
+          const token = await AsyncStorage.getItem("userToken");
+          const response = await instance.get(
+            `/account/${gameInfo.game.createdBy}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          const userData = response.data;
+          setAccount(userData);
+        }
+      } catch (error) {
+        setAccount(null);
+      }
+    };
+
+    getUserData();
+  }, [gameInfo]);
+
+  useEffect(() => {
+    setURL(`https://app.darksync.org/game/${gameId}`);
+  }, [gameInfo, gameId]);
+
+  if (!gameInfo || !account) {
     return (
       <View style={styles.container}>
-        <Text style={styles.loadingText}>Loading game information...</Text>
+        <Text style={styles.loadingText}>Loading game data...</Text>
       </View>
     );
   }
 
-  let { scoresThuisploeg, scoresBezoekers, title, location } = gameInfo.game;
-  let Winner;
-  if (scoresThuisploeg < scoresBezoekers) {
-    Winner = "Bezoekers";
-  } else if (scoresThuisploeg > scoresBezoekers) {
-    Winner = "Thuis ploeg";
+  console.log(gameInfo);
+
+  let { scoresThuisploeg, scoresBezoekers } = gameInfo.game;
+  let resultText;
+  let yourTeam = gameInfo.game.Players.find(
+    (player) => player.user === account.IDUser
+  );
+
+  if (yourTeam && yourTeam.game_players && yourTeam.game_players.teamSide) {
+    const teamSide = yourTeam.game_players.teamSide;
+
+    if (scoresThuisploeg < scoresBezoekers && teamSide === "home") {
+      resultText = "You lost";
+    } else if (scoresThuisploeg > scoresBezoekers && teamSide === "home") {
+      resultText = "You won";
+    } else if (scoresThuisploeg < scoresBezoekers && teamSide === "out") {
+      resultText = "You won";
+    } else if (scoresThuisploeg > scoresBezoekers && teamSide === "out") {
+      resultText = "You lost";
+    } else {
+      resultText = "Draw";
+    }
   } else {
-    Winner = "Gelijk Spel";
+    resultText = "No team information available";
   }
+
   if (scoresThuisploeg === null || scoresBezoekers === null) {
     scoresThuisploeg = 0;
     scoresBezoekers = 0;
   }
 
+  const handleShare = async () => {
+    Share.share({
+      title: "Basketball results",
+      message: `Check out my basketball result! Click the link to view!\n${URL}`,
+    });
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Game Ended: {title}</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.title}>{resultText}</Text>
 
-      <View style={styles.StatsContainer}>
-        <Text style={styles.Winner}>Winner: {Winner}</Text>
-        <Text style={styles.StatText}>Stats: </Text>
-        <Text style={styles.teamScore}>Team A: {scoresThuisploeg}</Text>
-        <Text style={styles.teamScore}>Team B: {scoresBezoekers}</Text>
-        <Text style={styles.Location}>Location: {location}</Text>
-      </View>
+        <View style={styles.scoreContainer}>
+          <View style={styles.scoreItem}>
+            <Text style={styles.score}>{scoresThuisploeg}</Text>
+          </View>
+          <Text style={styles.vs}> VS </Text>
+          <View style={styles.scoreItem}>
+            <Text style={styles.score}>{scoresBezoekers}</Text>
+          </View>
+        </View>
 
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Back to Home"
-          onPress={() => navigation.navigate("Home")}
-        />
+        <View style={styles.contentContainer}>
+          <View style={styles.linkContainer}>
+            <Text style={styles.linkText}>Share game results:</Text>
+            <TouchableOpacity style={styles.joinButton} onPress={handleShare}>
+              <Text style={styles.joinButtonText}>Share</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.matchInfoContainer}>
+            <View style={styles.matchInfoRow}>
+              <View style={styles.matchInfoItem}>
+                <Text style={styles.matchInfoLabel}>Extra Info</Text>
+                <Text style={styles.matchInfoValue}>
+                  {gameInfo.game.extraInfo}
+                </Text>
+              </View>
+              <View style={styles.matchInfoItem}>
+                <Text style={styles.matchInfoLabel}>Time</Text>
+                <Text style={styles.matchInfoValue}>
+                  {new Date(gameInfo.game.time).toDateString()}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.matchInfoRow}>
+              <View style={styles.matchInfoItem}>
+                <Text style={styles.matchInfoLabel}>Game Type</Text>
+                <Text style={styles.matchInfoValue}>
+                  {gameInfo.game.gameType}
+                </Text>
+              </View>
+              <View style={styles.matchInfoItem}>
+                <Text style={styles.matchInfoLabel}>Game Style</Text>
+                <Text style={styles.matchInfoValue}>
+                  {gameInfo.game.gameStyle}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.matchInfoRow}>
+              <View style={styles.matchInfoItem}>
+                <Text style={styles.matchInfoLabel}>Location</Text>
+                <Text style={styles.matchInfoValue}>
+                  {gameInfo.game.location}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.tableContainer}>
+            <Button
+              title="Back to Home"
+              onPress={() => navigation.navigate("Home")}
+            />
+          </View>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -79,43 +192,148 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f8f8f8",
-    padding: 20,
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-    color: "#333",
+    backgroundColor: "#F5F5F5",
   },
   loadingText: {
-    fontSize: 16,
-    color: "#666",
+    fontSize: 18,
+    color: "#333",
   },
-  winner: {
-    fontSize: 20,
+  title: {
+    fontSize: 44,
+    color: Colors.purple,
+    marginBottom: 10,
     fontWeight: "bold",
-    marginBottom: 20,
-    color: "#333",
-    textTransform: "uppercase",
+    marginTop: 35,
+    textAlign: "center",
   },
-  statsContainer: {
-    alignItems: "center",
+  contentContainer: {
+    backgroundColor: "#FFF",
+    padding: 20,
+    borderRadius: 10,
+    width: "100%",
+  },
+  matchInfoContainer: {
+    backgroundColor: "#F1F1F1",
+    padding: 10,
+    borderRadius: 5,
     marginBottom: 20,
   },
-  teamScore: {
-    fontSize: 20,
+  matchInfoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
-    color: "#333",
   },
-  location: {
+  matchInfoItem: {
+    flex: 1,
+    marginRight: 10,
+  },
+  matchInfoLabel: {
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 5,
+  },
+  matchInfoValue: {
     fontSize: 16,
-    marginBottom: 10,
-    color: "#666",
+    color: "#333",
   },
-  buttonContainer: {
+  linkContainer: {
+    marginBottom: 20,
+  },
+  linkText: {
+    fontSize: 14,
+    color: "#333",
+    marginBottom: 5,
+  },
+  joinButton: {
+    marginTop: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FF9800",
+  },
+  joinButtonText: {
+    fontSize: 16,
+    color: "#FFF",
+  },
+  tableContainer: {
     marginTop: 20,
+  },
+  button: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  buttonText: {
+    fontSize: 16,
+    color: "#FFF",
+  },
+  tableTitle: {
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 10,
+  },
+  table: {
+    backgroundColor: "#F1F1F1",
+    borderRadius: 5,
+    padding: 10,
+  },
+  tableRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  tableHeader: {
+    fontSize: 14,
+    color: "#555",
+    fontWeight: "bold",
+  },
+  userRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 5,
+  },
+  userName: {
+    fontSize: 14,
+    color: "#333",
+  },
+  userRole: {
+    fontSize: 14,
+    color: "#555",
+  },
+  noUsersText: {
+    fontSize: 14,
+    color: "#555",
+    fontStyle: "italic",
+  },
+  scoreContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    marginBottom: 20,
+  },
+  scoreItem: {
+    alignItems: "center",
+  },
+  scoreLabel: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 5,
+  },
+  score: {
+    fontSize: 32,
+    color: "#333",
+  },
+  vs: {
+    fontSize: 24,
+    color: "#333",
+    marginHorizontal: 20,
   },
 });
 

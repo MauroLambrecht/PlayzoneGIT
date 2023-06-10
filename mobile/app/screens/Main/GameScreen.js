@@ -32,13 +32,14 @@ const GameScreen = () => {
     }, 1000);
 
     if (timer <= 0) {
+      console.log(timer);
       navigation.navigate("GameStarted", { gameid: gameId });
     }
 
     return () => {
       clearInterval(timerInterval);
     };
-  }, []);
+  }, [timer, gameId, gameData, account]);
 
   useEffect(() => {
     const fetchGameData = async () => {

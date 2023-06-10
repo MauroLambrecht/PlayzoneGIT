@@ -31,7 +31,7 @@ const HomeScreen = () => {
       const response = await instance.get("/mygames", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const myPlayerData = response.data;
+      const myPlayerData = response.data.filter((game) => !game.finished);
       console.log(response.data);
       setPlayerData(myPlayerData);
     } catch (error) {

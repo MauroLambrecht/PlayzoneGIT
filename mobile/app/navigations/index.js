@@ -16,7 +16,6 @@ const AppNavContainer = () => {
     const token = await AsyncStorage.getItem("userToken");
     if (token !== null) {
       setIsLoggedIn(true);
-      // await connectUser();
     }
   };
 
@@ -26,11 +25,12 @@ const AppNavContainer = () => {
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    connectUser();
   };
 
   const handleLogout = () => {
     AsyncStorage.removeItem("userToken");
+    AsyncStorage.removeItem("user");
+    AsyncStorage.removeItem("profilePicture");
     setIsLoggedIn(false);
   };
 

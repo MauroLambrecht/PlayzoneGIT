@@ -45,25 +45,38 @@ const GameStarted = () => {
   const endGame = async () => {
     let winner;
     if (teamAScore < teamBScore) {
-      winner = "Out";
+      winner = "out";
     } else {
-      winner = "Home";
+      winner = "home";
     }
 
     try {
       const token = await AsyncStorage.getItem("userToken");
-      await instance.post("/endgame", {
-        headers: { Authorization: `Bearer ${token}` },
-        data: {
-          gameid: gameid,
-          scoresThuisploeg: teamAScore,
-          scoresBezoekers: teamBScore,
-          winner: winner,
-        },
-      });
-    } catch (error) {}
+      if (teamAScore !== null && teamBScore !== null) {
+        await instance.patch(
+          "/endgame",
+          {
+            scoresThuisploeg: teamAScore,
+            scoresBezoekers: teamBScore,
+            winner: winner,
+            gameId: gameid,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-    navigation.navigate("GameEnded", { gameId: gameid });
+        resetScores();
+      } else {
+        console.error("Invalid scores provided");
+        return; // Exit the function if scores are invalid
+      }
+
+      navigation.navigate("GameEnded", { gameId: gameid });
+    } catch (error) {
+      console.error("Error ending game:", error);
+      // Handle the error here or display an error message
+    }
   };
 
   useEffect(() => {

@@ -218,6 +218,7 @@ const styles = StyleSheet.create({
     color: Colors.mediumGray,
     marginLeft: 20,
     fontFamily: "QuicksandBold",
+    width: "60%",
   },
   profileFollowers: {
     flexDirection: "row",

@@ -34,6 +34,7 @@ import instance from "../services/index.js";
 import LinkingConfiguration from "../../LinkingConfiguration.js";
 import GameStarted from "../screens/Main/GameStarted.js";
 import GameEnded from "../screens/Main/GameEnded.js";
+import { showMessage } from "react-native-flash-message";
 
 const Tab = createBottomTabNavigator();
 
@@ -59,9 +60,9 @@ const HomeNavigator = ({ handleLogout, inPlayScreen }) => {
           const base64String = `data:image/jpeg;base64,${response.data}`;
           await AsyncStorage.setItem("profilePicture", base64String);
           setProfilePictureUri(cachedPicture);
+        } else {
+          setProfilePictureUri(cachedPicture);
         }
-
-        setProfilePictureUri(cachedPicture);
       } catch (error) {
         console.error("Error fetching profile picture:", error);
       }
@@ -84,7 +85,14 @@ const HomeNavigator = ({ handleLogout, inPlayScreen }) => {
     headerLeft: () => <View style={styles.centerTitle}></View>,
     headerRight: () => (
       <View style={styles.icons}>
-        <TouchableOpacity onPress={handleLogout}>
+        <TouchableOpacity
+          onPress={() => {
+            showMessage({
+              message: "Notifications aren't added yet",
+              type: "info",
+            });
+          }}
+        >
           <MaterialCommunityIcons
             name="bell-alert-outline"
             size={26}
@@ -93,7 +101,14 @@ const HomeNavigator = ({ handleLogout, inPlayScreen }) => {
           />
         </TouchableOpacity>
         {/* if no notifications: <MaterialCommunityIcons name="bell-check-outline" size={24} color="black" /> */}
-        <TouchableOpacity onPress={() => navigation.navigate("ChannelList")}>
+        <TouchableOpacity
+          onPress={() => {
+            showMessage({
+              message: "Messages aren't added yet",
+              type: "info",
+            });
+          }}
+        >
           <AntDesign
             name="message1"
             size={26}

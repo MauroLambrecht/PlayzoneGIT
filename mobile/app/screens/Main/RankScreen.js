@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Image,
@@ -14,7 +14,7 @@ import RoundButton from "../../components/misc/RoundButton.js";
 import Colors from "../../config/colors.js";
 import { FontAwesome } from "@expo/vector-icons";
 
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import PlayerRank from "../../components/sections/PlayerRank.js";
 import instance from "../../services/index.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -22,32 +22,35 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const RankScreen = () => {
   const [playerData, setPlayerData] = useState([]);
 
-  useEffect(() => {
-    let transformedData = [];
+  useFocusEffect(
+    useCallback(() => {
+      setPlayerData([]);
+      fetchPlayerData();
+    }, [])
+  );
 
-    //fix c++ error on IOS
-    const fetchPlayerData = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        const response = await instance.get("/leaderboard", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const myPlayerData = response.data;
+  const fetchPlayerData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const response = await instance.get("/leaderboard", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const myPlayerData = response.data;
 
-        transformedData = myPlayerData.leaderboard.map((player, index) => ({
-          rank: index + 1,
-          name: player.username,
-          points: player.points,
-        }));
+      transformedData = myPlayerData.leaderboard.map((player, index) => ({
+        id: player.IDUser,
+        rank: index + 1,
+        name: player.username,
+        points: player.points,
+      }));
 
-        setPlayerData(transformedData);
-      } catch (error) {
-        transformedData = [];
-      }
-    };
+      console.log(myPlayerData.leaderboard);
 
-    fetchPlayerData();
-  }, []);
+      setPlayerData(transformedData);
+    } catch (error) {
+      transformedData = [];
+    }
+  };
 
   const fontsLoaded = useProjectFonts();
   if (!fontsLoaded) {

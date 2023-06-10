@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -15,7 +15,7 @@ import { useProjectFonts } from "../../config/fonts";
 import { ActivityIndicator } from "react-native-paper";
 import GameCard from "../../components/sections/GameCard";
 import EnterCodeModal from "../../components/modals/EnterCodeModal.js";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -29,23 +29,26 @@ const PlayScreen = () => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        const response = await fetch("http://app.darksync.org/OpenGames", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await response.json();
-        setGames(data);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      setGames([]);
+      fetchGames();
+    }, [])
+  );
 
-    fetchGames();
-  }, []);
+  const fetchGames = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const response = await fetch("http://app.darksync.org/OpenGames", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      setGames(data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (!fontsLoaded || loading) {
     return <ActivityIndicator />;

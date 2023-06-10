@@ -1,9 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Image, Text, StyleSheet, FlatList } from "react-native";
 import { useProjectFonts } from "../../config/fonts";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import instance from "../../services";
 
 const PlayerRank = ({ player }) => {
-  const { rank, name, points } = player;
+  const { id, rank, name, points } = player;
+
+  const [ProfilePictureUri, setProfilePictureUri] = useState();
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      const token = await AsyncStorage.getItem("userToken");
+
+      const response = await instance.get(`/getProfilePicture/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const base64String = `data:image/jpeg;base64,${response.data}`;
+      setProfilePictureUri(base64String);
+    };
+
+    getUserInfo();
+  }, [player]);
 
   const fontsLoaded = useProjectFonts();
   if (!fontsLoaded) {
@@ -16,10 +37,14 @@ const PlayerRank = ({ player }) => {
         <Text style={styles.number}>{rank}</Text>
 
         <View style={styles.profilePicWrapper}>
-          <Image
-            source={require("../../assets/images/1slnr0.jpg")}
-            style={styles.profilePic}
-          />
+          {ProfilePictureUri ? (
+            <Image source={{ uri: ProfilePictureUri }} style={styles.ClubPic} />
+          ) : (
+            <Image
+              source={require("../../assets/images/1slnr0.jpg")}
+              style={styles.ClubPic}
+            />
+          )}
         </View>
 
         <View style={styles.infoWrapper}>
@@ -39,6 +64,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: 25,
     marginRight: 25,
+  },
+  ClubPic: {
+    width: "100%",
+    height: "100%",
   },
   rank: {
     fontSize: 13,
